@@ -115,7 +115,7 @@ html[lang="en"] [data-l="de"] { display: none !important; }
 }
 .burger span { display: block; width: 18px; height: 1.5px; background: var(--ink); box-shadow: 0 -6px 0 var(--ink), 0 6px 0 var(--ink); }
 
-@media (min-width: 1100px) {
+@media (min-width: 960px) {
   .header-in { height: var(--header-h); }
   .logo-word { font-size: 36px; }
   .nav-main { display: block; }
@@ -124,6 +124,11 @@ html[lang="en"] [data-l="de"] { display: none !important; }
   .header-right { justify-self: end; }
   .header-res.link { display: none; }
   .burger { display: none; }
+}
+/* планшет в альбомной ориентации (iPad): то же меню, плотнее */
+@media (min-width: 960px) and (max-width: 1199px) {
+  .logo-word { font-size: 30px; }
+  .nav-main li + li::before { margin: 0 14px; }
 }
 
 /* ---------- боковое меню ---------- */
@@ -358,7 +363,7 @@ html[lang="en"] [data-l="de"] { display: none !important; }
 }
 .menu-tabs a + a { border-left: 1px solid var(--line); }
 .menu-tabs a.is-active { background: var(--brand); color: var(--bg); }
-@media (min-width: 1100px) { .menu-tabs { top: var(--header-h); } }
+@media (min-width: 960px) { .menu-tabs { top: var(--header-h); } }
 .menu-cat { padding-top: 80px; }
 .menu-cat__head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; border-bottom: 1px solid var(--line); padding-bottom: 14px; margin-bottom: 8px; }
 .menu-cat__head p { color: var(--muted); margin: 0; max-width: 420px; text-align: right; }
