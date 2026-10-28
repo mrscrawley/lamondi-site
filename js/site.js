@@ -194,7 +194,9 @@ function initLogoDock() {
 
 /* ---------- инерционная прокрутка страницы (как на «Родос»): только мышь/тачпад, на телефоне — родная ---------- */
 function initSmooth() {
-  if (!window.Lenis || matchMedia("(prefers-reduced-motion: reduce)").matches || !matchMedia("(pointer: fine)").matches) return;
+  // на iPad/телефоне — родная прокрутка: iPad с клавиатурой-трекпадом выдаёт pointer:fine,
+  // а Lenis там неверно считает низ страницы (панель Safari меняет высоту окна) и не даёт докрутить
+  if (!window.Lenis || matchMedia("(prefers-reduced-motion: reduce)").matches || !matchMedia("(pointer: fine)").matches || navigator.maxTouchPoints > 0) return;
   const lenis = window.lenis = new Lenis({ lerp: 0.11, wheelMultiplier: 1 });
   const raf = t => { lenis.raf(t); requestAnimationFrame(raf); };
   requestAnimationFrame(raf);
