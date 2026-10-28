@@ -21,9 +21,10 @@
 <meta name="theme-color" content="#F8F1E7">
 <link rel="icon" href="assets/favicon.svg">
 <link rel="preload" href="assets/fonts/outfit-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="css/style.css?v=19">
+<link rel="stylesheet" href="css/style.css?v=21">
 <script src="js/menu-data.js?v=6" defer></script>
-<script src="js/site.js?v=26" defer></script>
+<script src="assets/js/lenis.min.js" defer></script>
+<script src="js/site.js?v=28" defer></script>
 </head>
 <body>
 <header id="site-header"></header>
@@ -128,7 +129,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const b = e.target.closest("button"); if (!b) return;
     show(b.dataset.group);
     history.replaceState(null, "", "#" + b.dataset.group);
-    groups.scrollIntoView({ behavior: "smooth" });
+    window.lenis ? window.lenis.scrollTo(groups, { offset: -90, duration: 1 }) : groups.scrollIntoView({ behavior: "smooth" });
   });
 
   // фото блюда крупно

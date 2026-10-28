@@ -93,6 +93,7 @@ function renderHeader() {
     side.classList.toggle("is-open", v);
     burger.setAttribute("aria-expanded", String(v));
     document.documentElement.style.overflow = v ? "hidden" : "";
+    v ? window.lenis?.stop() : window.lenis?.start();
   };
   burger.addEventListener("click", () => open(true));
   side.addEventListener("click", e => { if (e.target.closest("[data-close]") || e.target.closest("a")) open(false); });
@@ -178,6 +179,24 @@ function initLogoDock() {
   const onScroll = () => { if (!queued) { queued = true; requestAnimationFrame(tick); } };
   addEventListener("scroll", onScroll, { passive: true }); addEventListener("resize", onScroll); tick();
   dockOff = () => { removeEventListener("scroll", onScroll); removeEventListener("resize", onScroll); ghost.remove(); hero.style.visibility = ""; };
+}
+
+/* ---------- инерционная прокрутка страницы (как на «Родос»): только мышь/тачпад, на телефоне — родная ---------- */
+function initSmooth() {
+  if (!window.Lenis || matchMedia("(prefers-reduced-motion: reduce)").matches || !matchMedia("(pointer: fine)").matches) return;
+  const lenis = window.lenis = new Lenis({ lerp: 0.11, wheelMultiplier: 1 });
+  const raf = t => { lenis.raf(t); requestAnimationFrame(raf); };
+  requestAnimationFrame(raf);
+  // якоря (#anfahrt, #catering …) — тоже плавно, с поправкой на шапку
+  document.addEventListener("click", e => {
+    const a = e.target.closest('a[href*="#"]');
+    if (!a || a.origin + a.pathname !== location.origin + location.pathname) return;
+    const id = a.hash, t = id.length > 1 && document.querySelector(id);
+    if (!t) return;
+    e.preventDefault();
+    lenis.scrollTo(t, { offset: -90, duration: 1.2 });
+    history.replaceState(null, "", id);
+  });
 }
 
 /* ---------- огромный вордмарк во всю ширину ---------- */
@@ -296,37 +315,41 @@ function initSlider() {
     const track = root.querySelector(".fav__track");
     const slides = [...track.children], n = slides.length;
     const out = document.querySelectorAll("[data-slider-count]");
-    // бесконечная лента: по краям копии последнего и первого слайда, после докрутки до копии
-    // незаметно перескакиваем на настоящий слайд — с 4/4 вперёд едем на 1/4, а не отматываем назад
+    // бесконечная лента: по краям копии последнего и первого слайда — с 4/4 вперёд едем на 1/4
     const head = slides[n - 1].cloneNode(true), tail = slides[0].cloneNode(true);
     [head, tail].forEach(c => { c.setAttribute("aria-hidden", "true"); c.classList.remove("is-active"); });
     track.prepend(head); track.append(tail);
-    let pos = 1;                                         // 1..n — настоящие слайды, 0 и n+1 — копии
-    const place = (px = 0, animate = true) => {
-      track.style.transition = animate ? "" : "none";
-      track.style.transform = `translateX(calc(${-100 * pos}% + ${px}px))`;
+    // позиция — дробное число слайдов; лента плавно догоняет цель (как инерционный скролл),
+    // после жеста цель мягко притягивается к ближайшему слайду
+    let cur = 0, target = 0, running = false, shown = -1;
+    const W = () => root.clientWidth || 1;
+    const mod = v => ((v % n) + n) % n;
+    const render = () => {
+      track.style.transform = `translate3d(${(-(mod(cur) + 1) * W()).toFixed(2)}px,0,0)`;
+      const i = mod(Math.round(cur));
+      if (i !== shown) {
+        shown = i;
+        slides.forEach((sl, k) => { sl.classList.toggle("is-active", k === i); sl.setAttribute("aria-hidden", String(k !== i)); });
+        head.classList.toggle("is-active", i === n - 1); tail.classList.toggle("is-active", i === 0);
+        out.forEach(o => o.innerHTML = `${i + 1} ${T("von", "of")} ${n}`);
+      }
     };
-    const mark = () => {
-      const i = (pos - 1 + n) % n;
-      slides.forEach((sl, k) => { sl.classList.toggle("is-active", k === i); sl.setAttribute("aria-hidden", String(k !== i)); });
-      head.classList.toggle("is-active", i === n - 1); tail.classList.toggle("is-active", i === 0);   // копии выглядят так же — без рывка при перескоке
-      out.forEach(o => o.innerHTML = `${i + 1} ${T("von", "of")} ${n}`);
+    const loop = () => {
+      const d = target - cur;
+      cur += d * (dragging ? 0.35 : 0.085);              // мягкое догоняние: быстро за пальцем, плавно при доводке
+      if (Math.abs(d) < 0.0005) { cur = target; running = false; render(); return; }
+      render(); requestAnimationFrame(loop);
     };
-    const go = to => { pos = Math.max(0, Math.min(n + 1, to)); place(); mark(); };
-    track.addEventListener("transitionend", e => {
-      if (e.target !== track) return;
-      if (pos === 0) { pos = n; place(0, false); }
-      else if (pos === n + 1) { pos = 1; place(0, false); }
-    });
-    const step = d => { if (pos === 0 || pos === n + 1) return; go(pos + d); };   // ждём, пока докатится до копии
+    const kick = () => { if (!running) { running = true; requestAnimationFrame(loop); } };
+    const step = d => { target = Math.round(target) + d; kick(); };
     document.querySelectorAll("[data-prev]").forEach(b => b.addEventListener("click", () => step(-1)));
     document.querySelectorAll("[data-next]").forEach(b => b.addEventListener("click", () => step(1)));
-    // перетаскивание мышью и пальцем: слайд едет за указателем, при отпускании докатывается
-    let x0 = null, y0 = 0, dx = 0, t0 = 0, dragging = false;
+
+    // перетаскивание мышью и пальцем: лента идёт за указателем, при отпускании — инерция и доводка
+    let x0 = null, y0 = 0, start = 0, dragging = false, lastX = 0, lastT = 0, vel = 0;
     root.addEventListener("pointerdown", e => {
       if (e.button) return;
-      if (pos === 0 || pos === n + 1) { pos = pos === 0 ? n : 1; place(0, false); }
-      x0 = e.clientX; y0 = e.clientY; dx = 0; t0 = performance.now(); dragging = false;
+      x0 = lastX = e.clientX; y0 = e.clientY; start = target; lastT = performance.now(); vel = 0; dragging = false;
     });
     root.addEventListener("pointermove", e => {
       if (x0 === null) return;
@@ -336,34 +359,45 @@ function initSlider() {
         if (Math.abs(mx) < 6) return;
         dragging = true; root.classList.add("is-dragging"); root.setPointerCapture(e.pointerId);
       }
-      dx = mx; place(dx, false);
+      const now = performance.now();
+      vel = 0.8 * vel + 0.2 * ((e.clientX - lastX) / Math.max(1, now - lastT));   // px/мс, сглаженная
+      lastX = e.clientX; lastT = now;
+      target = start - mx / W(); kick();
     });
     const end = () => {
       if (x0 === null) return;
       x0 = null;
       if (!dragging) return;
-      root.classList.remove("is-dragging");
-      const fast = Math.abs(dx) / (performance.now() - t0) > 0.5;
-      const far = Math.abs(dx) > root.clientWidth * 0.15;
-      go(fast || far ? pos + (dx < 0 ? 1 : -1) : pos);
-      // после перетаскивания мышью не срабатывает клик по ссылке/картинке
+      dragging = false; root.classList.remove("is-dragging");
+      const moved = target + (-vel * 260 / W()) - start;   // с учётом броска (инерции)
+      target = Math.abs(moved) < 0.12 ? Math.round(start)
+        : Math.abs(moved) < 1 ? Math.round(start) + Math.sign(moved) : Math.round(start + moved);
+      kick();
       root.addEventListener("click", ev => { ev.preventDefault(); ev.stopPropagation(); }, { capture: true, once: true });
     };
     root.addEventListener("pointerup", end);
     root.addEventListener("pointercancel", end);
-    // свайп двумя пальцами по трекпаду (горизонтальное колесо)
-    let acc = 0, lock = 0;
+
+    // трекпад: лента плавно едет за двумя пальцами, после остановки жеста притягивается к слайду
+    let idle, g0 = null;
     root.addEventListener("wheel", e => {
-      if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;          // вертикальный скролл не трогаем
-      e.preventDefault();                                             // и не даём браузеру уйти «назад»
-      if (performance.now() < lock) return;
-      acc += e.deltaX;
-      if (Math.abs(acc) > 40) { step(acc > 0 ? 1 : -1); acc = 0; lock = performance.now() + 750; }
+      if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;          // вертикальный скролл — странице
+      e.preventDefault(); e.stopPropagation();                        // не «назад» в браузере и не Lenis
+      if (g0 === null) g0 = Math.round(target);                       // начало жеста
+      target += e.deltaX / W() * 1.2;
+      target = Math.max(g0 - 1.1, Math.min(g0 + 1.1, target));        // за один жест — не дальше соседнего
+      kick(); clearTimeout(idle);
+      idle = setTimeout(() => {                                       // жест закончился: лёгкий свайп = следующий слайд
+        const diff = target - g0;
+        target = Math.abs(diff) < 0.06 ? g0 : g0 + Math.sign(diff);
+        g0 = null; kick();
+      }, 120);
     }, { passive: false });
-    // стрелки на клавиатуре, когда слайдер в фокусе
+
     root.tabIndex = 0;
     root.addEventListener("keydown", e => { if (e.key === "ArrowRight") step(1); if (e.key === "ArrowLeft") step(-1); });
-    place(0, false); mark();
+    addEventListener("resize", render);
+    render();
   });
 }
 
@@ -437,6 +471,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setLang(document.documentElement.lang);
   initReveal();
   initLightWall();
+  initSmooth();
   initSlider();
   initJump();
   initForms();
