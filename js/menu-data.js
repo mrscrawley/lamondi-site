@@ -65,7 +65,7 @@ const MENU = [
         { img: "temaki-maguro", de: "Maguro Temaki", dDe: "Thunfisch | Gurke | Kresse", dEn: "tuna | cucumber | cress", p: "5,90" },
         { img: "temaki-california", de: "California Temaki", dDe: "Garnelen | Avocado | Gurke | Tobiko", dEn: "prawns | avocado | cucumber | tobiko", p: "5,90" },
       ] },
-    { id: "sushi-mix", de: "sushi mix", en: "sushi mix",
+    { id: "sushi-mix", de: "sushi mix", en: "sushi mix", noteDe: "Die Fotos zeigen Beispiele der Anrichtung. Die Zusammenstellung wechselt und kann abweichen.", noteEn: "Photos show example servings. The selection changes and may differ.",
       items: [
         { img: "mix-lamondi", hl: true, de: "Sushi Mix lamondi", dDe: "14 Stück, verschiedene Makis und Nigiris", dEn: "14 pieces, assorted maki and nigiri", p: "15,90" },
         { img: "mix-maki", de: "Sushi Mix Maki", dDe: "14 Stück, verschiedene Makis", dEn: "14 pieces, assorted maki", p: "12,90" },
