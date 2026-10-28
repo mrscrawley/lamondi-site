@@ -366,26 +366,6 @@ function initSlider() {
   });
 }
 
-/* ---------- «перейти к» ---------- */
-function initJump() {
-  const dd = document.querySelector("[data-jump]");
-  if (!dd) return;
-  const btn = dd.querySelector(".jump__btn"), list = dd.querySelector(".jump__list");
-  const open = v => { list.hidden = !v; btn.setAttribute("aria-expanded", String(v)); };
-  btn.addEventListener("click", () => {
-    open(list.hidden);
-    if (!list.hidden) list.querySelector("a").focus({ preventScroll: true });
-  });
-  list.addEventListener("click", e => { if (e.target.closest("a")) open(false); });
-  document.addEventListener("click", e => { if (!dd.contains(e.target)) open(false); });
-  dd.addEventListener("keydown", e => {
-    const links = [...list.querySelectorAll("a")], i = links.indexOf(document.activeElement);
-    if (e.key === "Escape") { open(false); btn.focus(); }
-    if (e.key === "ArrowDown" && !list.hidden) { e.preventDefault(); links[(i + 1) % links.length].focus(); }
-    if (e.key === "ArrowUp" && !list.hidden) { e.preventDefault(); links[(i - 1 + links.length) % links.length].focus(); }
-  });
-}
-
 /* ---------- формы ---------- */
 function initForms() {
   const rf = document.querySelector("[data-reservation]");
@@ -440,7 +420,6 @@ document.addEventListener("DOMContentLoaded", () => {
   initAnchors();
   initPrefetch();
   initSlider();
-  initJump();
   initForms();
   initVideo();
   document.fonts?.ready.then(() => { fitWords(); placeDots(); initLogoDock(); landOnHash(); });
