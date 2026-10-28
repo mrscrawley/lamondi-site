@@ -100,6 +100,8 @@ html[lang="en"] [data-l="de"] { display: none !important; }
 .nav-main li + li::before { content: ""; width: 5px; height: 5px; background: var(--amber); margin: 0 22px; }
 .nav-main a { color: var(--ink); font-weight: 500; text-transform: lowercase; }
 .nav-main a:hover, .nav-main a[aria-current="page"] { color: var(--brand); }
+.nav-main a:focus { outline: none; }
+.nav-main a:focus-visible { outline: 1px solid var(--brand); outline-offset: 6px; }
 .header-right { display: flex; align-items: center; gap: 14px; }
 .lang-switch { display: flex; border: 1px solid var(--line); }
 .lang-switch button {

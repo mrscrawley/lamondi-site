@@ -187,16 +187,35 @@ function initSmooth() {
   const lenis = window.lenis = new Lenis({ lerp: 0.11, wheelMultiplier: 1 });
   const raf = t => { lenis.raf(t); requestAnimationFrame(raf); };
   requestAnimationFrame(raf);
-  // якоря (#anfahrt, #catering …) — тоже плавно, с поправкой на шапку
+}
+// якоря (#anfahrt, #catering …) — плавно и с поправкой на шапку; на телефоне — родной плавной прокруткой
+function initAnchors() {
   document.addEventListener("click", e => {
     const a = e.target.closest('a[href*="#"]');
-    if (!a || a.origin + a.pathname !== location.origin + location.pathname) return;
-    const id = a.hash, t = id.length > 1 && document.querySelector(id);
+    if (!a || !samePage(a)) return;
+    const t = anchorTarget(a.hash);
     if (!t) return;
     e.preventDefault();
-    lenis.scrollTo(t, { offset: -90, duration: 1.2 });
-    history.replaceState(null, "", id);
+    if (window.lenis) window.lenis.scrollTo(t, { offset: -headerH(), duration: 1.2 });
+    else scrollTo({ top: t.getBoundingClientRect().top + scrollY - headerH(), behavior: "smooth" });
+    history.replaceState(null, "", a.hash);
   });
+}
+// куда на самом деле прокручивать по якорю: у секции можно указать data-scroll-to — например,
+// для #catering не заголовок, а сам блок с текстом и фото, ровно под шапкой
+const headerH = () => document.querySelector(".site-header")?.offsetHeight || 0;
+const anchorTarget = hash => {
+  const sec = hash.length > 1 && document.querySelector(hash);
+  if (!sec) return null;
+  return (sec.dataset.scrollTo && sec.querySelector(sec.dataset.scrollTo)) || sec;
+};
+const samePage = a => a.origin === location.origin && a.pathname.replace(/index\.html$/, "") === location.pathname.replace(/index\.html$/, "");
+// пришли по ссылке с другой страницы (index.html#catering) — встать так же, как при клике
+function landOnHash() {
+  const t = location.hash && anchorTarget(location.hash);
+  if (!t) return;
+  const y = t.getBoundingClientRect().top + scrollY - headerH();
+  window.lenis ? window.lenis.scrollTo(y, { immediate: true }) : scrollTo(0, y);
 }
 
 /* ---------- огромный вордмарк во всю ширину ---------- */
@@ -405,10 +424,11 @@ document.addEventListener("DOMContentLoaded", () => {
   initReveal();
   initLightWall();
   initSmooth();
+  initAnchors();
   initSlider();
   initJump();
   initForms();
   initVideo();
-  document.fonts?.ready.then(() => { fitWords(); placeDots(); initLogoDock(); });
+  document.fonts?.ready.then(() => { fitWords(); placeDots(); initLogoDock(); landOnHash(); });
   let rz; addEventListener("resize", () => { fitWords(); clearTimeout(rz); rz = setTimeout(initLogoDock, 150); });
 });
