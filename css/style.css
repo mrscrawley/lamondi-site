@@ -491,11 +491,11 @@ html[lang="en"] [data-l="de"] { display: none !important; }
 
 /* переходы между страницами (Chrome, Safari 18+); в остальных браузерах — мягкое появление */
 @view-transition { navigation: auto; }
-::view-transition-old(root) { animation: vtOut .35s ease both; }
-::view-transition-new(root) { animation: vtIn .55s cubic-bezier(.22,.61,.36,1) both; }
+::view-transition-old(root) { animation: vtOut .2s ease both; }      /* короткий одновременный перекрёст, без паузы */
+::view-transition-new(root) { animation: vtIn .28s ease-out both; }
 @keyframes vtOut { to { opacity: 0; } }
-@keyframes vtIn { from { opacity: 0; transform: translateY(8px); } }
-@supports not (view-transition-name: none) { main { animation: vtIn .6s cubic-bezier(.22,.61,.36,1) both; } }
+@keyframes vtIn { from { opacity: 0; } }
+@supports not (view-transition-name: none) { main { animation: vtIn .25s ease-out both; } }
 
 @media (prefers-reduced-motion: reduce) {
   .reveal, .reveal img { opacity: 1; transform: none; transition: none; }

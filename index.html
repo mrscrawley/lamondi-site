@@ -21,9 +21,11 @@
 <meta name="theme-color" content="#F8F1E7">
 <link rel="icon" href="assets/favicon.svg">
 <link rel="preload" href="assets/fonts/outfit-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="css/style.css?v=26">
+<!-- страницы сайта готовятся заранее, при наведении на ссылку (Chrome) — переход почти мгновенный -->
+<script type="speculationrules">{"prerender":[{"where":{"selector_matches":"a[href$='.html'], a[href*='.html#'], a[href*='.html?']"},"eagerness":"moderate"}]}</script>
+<link rel="stylesheet" href="css/style.css?v=27">
 <script src="assets/js/lenis.min.js" defer></script>
-<script src="js/site.js?v=32" defer></script>
+<script src="js/site.js?v=33" defer></script>
 </head>
 <body>
 <header id="site-header"></header>

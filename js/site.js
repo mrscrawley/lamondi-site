@@ -188,6 +188,19 @@ function initSmooth() {
   const raf = t => { lenis.raf(t); requestAnimationFrame(raf); };
   requestAnimationFrame(raf);
 }
+// Safari/Firefox не знают speculationrules — подгружаем страницу при наведении/касании обычным prefetch
+function initPrefetch() {
+  if (HTMLScriptElement.supports?.("speculationrules")) return;
+  const done = new Set();
+  const pre = e => {
+    const a = e.target.closest?.("a[href]");
+    if (!a || a.origin !== location.origin || !/\.html/.test(a.pathname) || samePage(a) || done.has(a.pathname)) return;
+    done.add(a.pathname);
+    const l = document.createElement("link"); l.rel = "prefetch"; l.href = a.href.split("#")[0]; document.head.append(l);
+  };
+  document.addEventListener("pointerover", pre, { passive: true });
+  document.addEventListener("touchstart", pre, { passive: true });
+}
 // якоря (#anfahrt, #catering …) — плавно и с поправкой на шапку; на телефоне — родной плавной прокруткой
 function initAnchors() {
   document.addEventListener("click", e => {
@@ -425,6 +438,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initLightWall();
   initSmooth();
   initAnchors();
+  initPrefetch();
   initSlider();
   initJump();
   initForms();
