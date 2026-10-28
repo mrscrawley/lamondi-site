@@ -3,6 +3,8 @@
 Статический сайт суши-ресторана Lamondi (Bahnhofstraße 23, Bayreuth) в стиле
 uchi.uchirestaurants.com. Языки DE (по умолчанию) и EN.
 
+Онлайн: https://mrscrawley.github.io/lamondi-site/ (GitHub Pages, ветка main, обновляется после push).
+
 Запуск локально: `python3 -m http.server 8741 --directory lamondi-site` → http://localhost:8741
 
 ## Где что менять
@@ -22,8 +24,8 @@ uchi.uchirestaurants.com. Языки DE (по умолчанию) и EN.
 - Сайт показывает **WebP** (`*.webp`, для широких ещё `*-800.webp` под телефон). После замены любого JPG
   в `assets/img` запустить `python3 _gen/webp.py`, иначе на сайте останется старое фото.
 - Шрифт Outfit лежит локально в `assets/fonts` (без Google Fonts).
-- Превью ссылки — `assets/og-image.jpg` (макет `_gen/og/og.html`). Когда будет домен, в `og:image` прописать
-  полный адрес `https://домен/assets/og-image.jpg` (сейчас путь относительный — мессенджеры его не подхватят).
+- Превью ссылки — `assets/og-image.jpg` (макет `_gen/og/og.html`). `og:image`/`og:url` сейчас указывают на
+  GitHub Pages (https://mrscrawley.github.io/lamondi-site/) — при переезде на свой домен заменить во всех HTML.
 - Стена: `assets/img/wand-nische.jpg` (über uns) и `wand-nischen.jpg` — визуализации по фото зала (`_ref/t01`, `t15`).
 - Ниши на сайте (полоса и «die leuchtwand») — студийные кадры каждой ниши по одному шаблону (фронтально, предмет
   по центру): исходники `_gen/niches2/*.png` → `python3 _gen/niche_crop.py` (обрезка точно по проёму) →
