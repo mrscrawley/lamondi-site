@@ -311,93 +311,26 @@ function initLightWall() {
 
 /* ---------- слайдер любимых блюд ---------- */
 function initSlider() {
+  // обычная горизонтальная прокрутка (трекпад, палец, полоса) + стрелки и счётчик
   document.querySelectorAll("[data-slider]").forEach(root => {
     const track = root.querySelector(".fav__track");
     const slides = [...track.children], n = slides.length;
     const out = document.querySelectorAll("[data-slider-count]");
-    // бесконечная лента: по краям копии последнего и первого слайда — с 4/4 вперёд едем на 1/4
-    const head = slides[n - 1].cloneNode(true), tail = slides[0].cloneNode(true);
-    [head, tail].forEach(c => { c.setAttribute("aria-hidden", "true"); c.classList.remove("is-active"); });
-    track.prepend(head); track.append(tail);
-    // позиция — дробное число слайдов; лента плавно догоняет цель (как инерционный скролл),
-    // после жеста цель мягко притягивается к ближайшему слайду
-    let cur = 0, target = 0, running = false, shown = -1;
-    const W = () => root.clientWidth || 1;
-    const mod = v => ((v % n) + n) % n;
-    const render = () => {
-      track.style.transform = `translate3d(${(-(mod(cur) + 1) * W()).toFixed(2)}px,0,0)`;
-      const i = mod(Math.round(cur));
-      if (i !== shown) {
-        shown = i;
-        slides.forEach((sl, k) => { sl.classList.toggle("is-active", k === i); sl.setAttribute("aria-hidden", String(k !== i)); });
-        head.classList.toggle("is-active", i === n - 1); tail.classList.toggle("is-active", i === 0);
-        out.forEach(o => o.innerHTML = `${i + 1} ${T("von", "of")} ${n}`);
-      }
+    const idx = () => Math.round(track.scrollLeft / track.clientWidth);
+    const prev = document.querySelectorAll("[data-prev]"), next = document.querySelectorAll("[data-next]");
+    const show = () => {
+      const i = Math.min(n - 1, Math.max(0, idx()));
+      slides.forEach((sl, k) => sl.setAttribute("aria-hidden", String(k !== i)));
+      out.forEach(o => o.innerHTML = `${i + 1} ${T("von", "of")} ${n}`);
+      prev.forEach(b => b.disabled = i === 0); next.forEach(b => b.disabled = i === n - 1);   // на краях стрелка гаснет
     };
-    const loop = () => {
-      const d = target - cur;
-      cur += d * (dragging ? 0.35 : 0.085);              // мягкое догоняние: быстро за пальцем, плавно при доводке
-      if (Math.abs(d) < 0.0005) { cur = target; running = false; render(); return; }
-      render(); requestAnimationFrame(loop);
-    };
-    const kick = () => { if (!running) { running = true; requestAnimationFrame(loop); } };
-    const step = d => { target = Math.round(target) + d; kick(); };
-    document.querySelectorAll("[data-prev]").forEach(b => b.addEventListener("click", () => step(-1)));
-    document.querySelectorAll("[data-next]").forEach(b => b.addEventListener("click", () => step(1)));
-
-    // перетаскивание мышью и пальцем: лента идёт за указателем, при отпускании — инерция и доводка
-    let x0 = null, y0 = 0, start = 0, dragging = false, lastX = 0, lastT = 0, vel = 0;
-    root.addEventListener("pointerdown", e => {
-      if (e.button) return;
-      x0 = lastX = e.clientX; y0 = e.clientY; start = target; lastT = performance.now(); vel = 0; dragging = false;
-    });
-    root.addEventListener("pointermove", e => {
-      if (x0 === null) return;
-      const mx = e.clientX - x0, my = e.clientY - y0;
-      if (!dragging) {
-        if (Math.abs(my) > 8 && Math.abs(my) > Math.abs(mx)) { x0 = null; return; }   // это вертикальный скролл страницы
-        if (Math.abs(mx) < 6) return;
-        dragging = true; root.classList.add("is-dragging"); root.setPointerCapture(e.pointerId);
-      }
-      const now = performance.now();
-      vel = 0.8 * vel + 0.2 * ((e.clientX - lastX) / Math.max(1, now - lastT));   // px/мс, сглаженная
-      lastX = e.clientX; lastT = now;
-      target = start - mx / W(); kick();
-    });
-    const end = () => {
-      if (x0 === null) return;
-      x0 = null;
-      if (!dragging) return;
-      dragging = false; root.classList.remove("is-dragging");
-      const moved = target + (-vel * 260 / W()) - start;   // с учётом броска (инерции)
-      target = Math.abs(moved) < 0.12 ? Math.round(start)
-        : Math.abs(moved) < 1 ? Math.round(start) + Math.sign(moved) : Math.round(start + moved);
-      kick();
-      root.addEventListener("click", ev => { ev.preventDefault(); ev.stopPropagation(); }, { capture: true, once: true });
-    };
-    root.addEventListener("pointerup", end);
-    root.addEventListener("pointercancel", end);
-
-    // трекпад: лента плавно едет за двумя пальцами, после остановки жеста притягивается к слайду
-    let idle, g0 = null;
-    root.addEventListener("wheel", e => {
-      if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;          // вертикальный скролл — странице
-      e.preventDefault(); e.stopPropagation();                        // не «назад» в браузере и не Lenis
-      if (g0 === null) g0 = Math.round(target);                       // начало жеста
-      target += e.deltaX / W() * 1.2;
-      target = Math.max(g0 - 1.1, Math.min(g0 + 1.1, target));        // за один жест — не дальше соседнего
-      kick(); clearTimeout(idle);
-      idle = setTimeout(() => {                                       // жест закончился: лёгкий свайп = следующий слайд
-        const diff = target - g0;
-        target = Math.abs(diff) < 0.06 ? g0 : g0 + Math.sign(diff);
-        g0 = null; kick();
-      }, 120);
-    }, { passive: false });
-
-    root.tabIndex = 0;
-    root.addEventListener("keydown", e => { if (e.key === "ArrowRight") step(1); if (e.key === "ArrowLeft") step(-1); });
-    addEventListener("resize", render);
-    render();
+    const go = i => track.scrollTo({ left: Math.min(n - 1, Math.max(0, i)) * track.clientWidth });
+    // горизонтальный жест трекпада — ленте (родная прокрутка), а не плавному скроллу страницы
+    track.addEventListener("wheel", e => { if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) e.stopPropagation(); }, { passive: true });
+    prev.forEach(b => b.addEventListener("click", () => go(idx() - 1)));
+    next.forEach(b => b.addEventListener("click", () => go(idx() + 1)));
+    let raf; track.addEventListener("scroll", () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(show); }, { passive: true });
+    show();
   });
 }
 

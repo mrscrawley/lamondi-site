@@ -274,18 +274,17 @@ html[lang="en"] [data-l="de"] { display: none !important; }
 .slider-tools { display: flex; align-items: center; gap: 14px; font-weight: 500; font-size: 13px; white-space: nowrap; }
 .sq-btn { width: 44px; height: 44px; border: 1px solid var(--line); background: transparent; display: grid; place-items: center; }
 .sq-btn:hover { background: var(--panel); }
+.sq-btn:disabled { opacity: .35; cursor: default; background: transparent; }
 .sq-btn svg { width: 10px; height: 16px; }
 @media (max-width: 420px) { .sec-head { flex-wrap: wrap; } .slider-tools { gap: 10px; } }
 .fav { position: relative; border: 1px solid var(--line); overflow: hidden; }
-.fav__track { display: flex; will-change: transform; }   /* движение ведёт JS (инерция + доводка) */
-.fav[data-slider] { touch-action: pan-y; cursor: grab; user-select: none; -webkit-user-select: none; }
-.fav[data-slider] img { -webkit-user-drag: none; pointer-events: none; }
-.fav.is-dragging { cursor: grabbing; }
-.fav[data-slider]:focus-visible { outline: 2px solid var(--brand); outline-offset: 4px; }
+/* обычная горизонтальная прокрутка браузера с прилипанием к слайдам */
+.fav__track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none; scroll-behavior: smooth; }
+.fav__track::-webkit-scrollbar { display: none; }
+.fav__slide { scroll-snap-align: start; scroll-snap-stop: always; }
 .fav__slide { flex: 0 0 100%; display: grid; grid-template-columns: 1fr; }
 .fav__img { aspect-ratio: 4 / 3; overflow: hidden; }
-.fav__img img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s; }
-.fav__slide.is-active .fav__img img { transform: scale(1.03); }
+.fav__img img { width: 100%; height: 100%; object-fit: cover; }
 .fav__text { padding: 28px; display: flex; flex-direction: column; justify-content: flex-start; }
 .fav__text h3 { font-size: 26px; text-transform: lowercase; margin-bottom: 8px; }
 .fav__text p { color: var(--muted); }
