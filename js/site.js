@@ -305,14 +305,50 @@ function initSlider() {
     };
     document.querySelectorAll("[data-prev]").forEach(b => b.addEventListener("click", () => go(i - 1)));
     document.querySelectorAll("[data-next]").forEach(b => b.addEventListener("click", () => go(i + 1)));
-    let x0 = null;
-    root.addEventListener("touchstart", e => x0 = e.touches[0].clientX, { passive: true });
-    root.addEventListener("touchend", e => {
-      if (x0 === null) return;
-      const dx = e.changedTouches[0].clientX - x0;
-      if (Math.abs(dx) > 40) go(i + (dx < 0 ? 1 : -1));
-      x0 = null;
+    // перетаскивание мышью и пальцем: слайд едет за указателем, при отпускании докатывается
+    let x0 = null, y0 = 0, dx = 0, t0 = 0, dragging = false;
+    root.addEventListener("pointerdown", e => {
+      if (e.button) return;
+      x0 = e.clientX; y0 = e.clientY; dx = 0; t0 = performance.now(); dragging = false;
     });
+    root.addEventListener("pointermove", e => {
+      if (x0 === null) return;
+      const mx = e.clientX - x0, my = e.clientY - y0;
+      if (!dragging) {
+        if (Math.abs(my) > 8 && Math.abs(my) > Math.abs(mx)) { x0 = null; return; }   // это вертикальный скролл страницы
+        if (Math.abs(mx) < 6) return;
+        dragging = true; root.classList.add("is-dragging"); root.setPointerCapture(e.pointerId);
+      }
+      dx = mx;
+      const edge = (i === 0 && dx > 0) || (i === slides.length - 1 && dx < 0) ? 0.35 : 1;   // у краёв — с сопротивлением
+      track.style.transform = `translateX(calc(${-100 * i}% + ${dx * edge}px))`;
+    });
+    const end = () => {
+      if (x0 === null) return;
+      x0 = null;
+      if (!dragging) return;
+      root.classList.remove("is-dragging");
+      const fast = Math.abs(dx) / (performance.now() - t0) > 0.5;
+      const far = Math.abs(dx) > root.clientWidth * 0.15;
+      go(fast || far ? i + (dx < 0 ? 1 : -1) : i);
+      // после перетаскивания мышью не срабатывает клик по ссылке/картинке
+      root.addEventListener("click", ev => { ev.preventDefault(); ev.stopPropagation(); }, { capture: true, once: true });
+      setTimeout(() => { dragging = false; }, 0);
+    };
+    root.addEventListener("pointerup", end);
+    root.addEventListener("pointercancel", end);
+    // свайп двумя пальцами по трекпаду (горизонтальное колесо)
+    let acc = 0, lock = 0;
+    root.addEventListener("wheel", e => {
+      if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;          // вертикальный скролл не трогаем
+      e.preventDefault();                                             // и не даём браузеру уйти «назад»
+      if (performance.now() < lock) return;
+      acc += e.deltaX;
+      if (Math.abs(acc) > 40) { go(i + (acc > 0 ? 1 : -1)); acc = 0; lock = performance.now() + 650; }
+    }, { passive: false });
+    // стрелки на клавиатуре, когда слайдер в фокусе
+    root.tabIndex = 0;
+    root.addEventListener("keydown", e => { if (e.key === "ArrowRight") go(i + 1); if (e.key === "ArrowLeft") go(i - 1); });
     go(0);
   });
 }
