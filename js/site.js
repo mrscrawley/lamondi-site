@@ -62,6 +62,8 @@ function renderHeader() {
     return `<li><a href="${n.href}"${cur}>${T(n.de, n.en)}</a></li>`;
   }).join("");
   el.className = "site-header";
+  // на главной логотип в шапке появляется, когда в неё «приедет» большое слово (initLogoDock) — прячем сразу, без мелькания
+  if (document.querySelector(".hero .hero__word .lm") && !matchMedia("(prefers-reduced-motion: reduce)").matches) document.documentElement.classList.add("dock");
   el.innerHTML = `<div class="container header-in">
       <a class="logo-word" href="index.html" aria-label="lamondi — Startseite"><span class="lm" aria-label="lamondi">lamond<span class="idot">ı</span></span></a>
       <nav class="nav-main" aria-label="Hauptnavigation"><ul>${links}</ul></nav>
@@ -130,6 +132,50 @@ function renderFooter() {
       <span class="credit">designed by <a href="https://nolvi-studio.com/" target="_blank" rel="noopener">nolvi studio</a></span>
     </div>
   </div>`;
+}
+
+/* ---------- главная: большое «lamondi» при скролле уменьшается и уезжает в логотип шапки ----------
+   Копия вордмарка (fixed, над шапкой) двигается только transform; оригинал держит место в вёрстке. */
+let dockOff = null;
+function initLogoDock() {
+  dockOff?.();
+  const hero = document.querySelector(".hero .hero__word .lm"), head = document.querySelector(".site-header .logo-word .lm");
+  const root = document.documentElement;
+  if (!hero || !head || matchMedia("(prefers-reduced-motion: reduce)").matches) { root.classList.remove("dock"); return; }
+  root.classList.add("dock"); root.classList.remove("dock-in");
+  hero.style.visibility = "";
+  const cs = getComputedStyle(hero);
+  const ghost = document.createElement("div");
+  ghost.className = "logo-ghost"; ghost.setAttribute("aria-hidden", "true");
+  ghost.style.cssText = `font-size:${cs.fontSize};letter-spacing:${cs.letterSpacing};font-weight:${cs.fontWeight};line-height:${cs.lineHeight}`;
+  ghost.append(hero.cloneNode(true));
+  document.body.append(ghost);
+  const g0 = ghost.getBoundingClientRect(), i0 = ghost.firstChild.getBoundingClientRect();
+  const ox = i0.left - g0.left, oy = i0.top - g0.top;   // слово внутри копии смещено от её угла — учитываем
+  const r = hero.getBoundingClientRect(), d = head.getBoundingClientRect();
+  const top0 = r.top + scrollY, left0 = r.left, k = d.width / r.width;
+  const sub = document.querySelector(".hero .hero__sub");
+  const hb = document.querySelector(".site-header").getBoundingClientRect().bottom;
+  const B0 = (sub ? sub.getBoundingClientRect().top : r.bottom) + scrollY;   // «bayreuth» под словом
+  const H = r.height, dist = Math.max(160, B0 - hb);   // к моменту, когда «bayreuth» дойдёт до шапки, слово уже в шапке
+  hero.style.visibility = "hidden";
+  let queued = false, docked = null;
+  const tick = () => {
+    queued = false;
+    const sY = scrollY, p = Math.min(1, Math.max(0, sY / dist));
+    const shrink = 1 - Math.pow(1 - p, 2);             // уменьшается сразу
+    const rise = p * p * p;                             // в полосу шапки заходит только в конце, уже маленьким
+    const x = left0 + (d.left - left0) * shrink, y = top0 + (d.top - top0) * rise;
+    // не наезжать на «bayreuth», который уезжает вверх вместе со страницей
+    const room = (B0 - sY) - y - 6;
+    const sc = p >= 1 ? k : Math.max(k, Math.min(1 + (k - 1) * shrink, room / H));
+    ghost.style.transform = `translate3d(${(x - ox * sc).toFixed(1)}px,${(y - oy * sc).toFixed(1)}px,0) scale(${sc.toFixed(4)})`;
+    const inHead = p >= 1;
+    if (inHead !== docked) { docked = inHead; root.classList.toggle("dock-in", inHead); ghost.style.opacity = inHead ? 0 : 1; }
+  };
+  const onScroll = () => { if (!queued) { queued = true; requestAnimationFrame(tick); } };
+  addEventListener("scroll", onScroll, { passive: true }); tick();
+  dockOff = () => { removeEventListener("scroll", onScroll); ghost.remove(); hero.style.visibility = ""; };
 }
 
 /* ---------- огромный вордмарк во всю ширину ---------- */
@@ -343,6 +389,6 @@ document.addEventListener("DOMContentLoaded", () => {
   initJump();
   initForms();
   initVideo();
-  document.fonts?.ready.then(() => { fitWords(); placeDots(); });
-  addEventListener("resize", fitWords);
+  document.fonts?.ready.then(() => { fitWords(); placeDots(); initLogoDock(); });
+  let rz; addEventListener("resize", () => { fitWords(); clearTimeout(rz); rz = setTimeout(initLogoDock, 150); });
 });
