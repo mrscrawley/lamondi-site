@@ -389,6 +389,8 @@ html[lang="en"] [data-l="de"] { display: none !important; }
 @media (max-width: 599px) { .menu-groups button { padding: 16px 10px 14px; } .menu-groups small { display: none; } }
 .menu-tabs { margin-top: -1px; }
 .dish sup { font-size: 9.5px; color: var(--muted); margin-left: 3px; font-weight: 400; }
+.dish--hl h3, .dish--hl .price { color: var(--brand); } /* фирменная позиция */
+.dish--hl .dish__thumb { border-color: var(--brand); }
 .dish .vol { color: var(--accent); }
 .menu-note p { margin: 0 0 10px; }
 .menu-note p:last-child { margin: 0; }

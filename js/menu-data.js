@@ -67,7 +67,7 @@ const MENU = [
       ] },
     { id: "sushi-mix", de: "sushi mix", en: "sushi mix",
       items: [
-        { img: "mix-lamondi", de: "Sushi Mix lamondi", dDe: "14 Stück, verschiedene Makis und Nigiris", dEn: "14 pieces, assorted maki and nigiri", p: "15,90" },
+        { img: "mix-lamondi", hl: true, de: "Sushi Mix lamondi", dDe: "14 Stück, verschiedene Makis und Nigiris", dEn: "14 pieces, assorted maki and nigiri", p: "15,90" },
         { img: "mix-maki", de: "Sushi Mix Maki", dDe: "14 Stück, verschiedene Makis", dEn: "14 pieces, assorted maki", p: "12,90" },
         { img: "mix-nigiri", de: "Sushi Mix Nigiri", dDe: "10 Stück, verschiedene Nigiris", dEn: "10 pieces, assorted nigiri", p: "17,90" },
         { img: "mix-veg", de: "Sushi Mix vegetarisch", en: "Sushi Mix vegetarian", dDe: "14 Stück, verschiedene Makis und Nigiris", dEn: "14 pieces, assorted maki and nigiri", p: "13,90" },
