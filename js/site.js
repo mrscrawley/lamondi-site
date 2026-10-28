@@ -156,9 +156,19 @@ function initLogoDock() {
   const gw = i0.width;                                  // ширина копии в масштабе 1
   const sub = document.querySelector(".hero .hero__sub"), bar = document.querySelector(".site-header");
   hero.style.visibility = "hidden";
-  let queued = false, docked = null;
+  let queued = false, docked = null, paused = false;
+  const vv = window.visualViewport;
   const tick = () => {
     queued = false;
+    // приближение пальцами (iPad, телефон): закреплённая копия съезжает относительно страницы —
+    // пока масштаб не 1, показываем обычное неподвижное слово, анимацию отключаем
+    const zoom = vv && vv.scale > 1.01;
+    if (zoom !== paused) {
+      paused = zoom; docked = null;
+      ghost.style.display = zoom ? "none" : ""; hero.style.visibility = zoom ? "" : "hidden";
+      root.classList.toggle("dock", !zoom); root.classList.remove("dock-in");
+    }
+    if (zoom) return;
     // геометрию берём каждый кадр с настоящего (скрытого) слова — копия всегда стоит точно на его месте,
     // даже если шрифт догрузился или ширина окна поменялась
     const sY = scrollY, r = hero.getBoundingClientRect(), d = head.getBoundingClientRect();
@@ -177,8 +187,9 @@ function initLogoDock() {
     if (inHead !== docked) { docked = inHead; root.classList.toggle("dock-in", inHead); ghost.style.opacity = inHead ? 0 : 1; }
   };
   const onScroll = () => { if (!queued) { queued = true; requestAnimationFrame(tick); } };
-  addEventListener("scroll", onScroll, { passive: true }); addEventListener("resize", onScroll); tick();
-  dockOff = () => { removeEventListener("scroll", onScroll); removeEventListener("resize", onScroll); ghost.remove(); hero.style.visibility = ""; };
+  addEventListener("scroll", onScroll, { passive: true }); addEventListener("resize", onScroll);
+  vv?.addEventListener("resize", onScroll); tick();
+  dockOff = () => { removeEventListener("scroll", onScroll); removeEventListener("resize", onScroll); vv?.removeEventListener("resize", onScroll); ghost.remove(); hero.style.visibility = ""; };
 }
 
 /* ---------- инерционная прокрутка страницы (как на «Родос»): только мышь/тачпад, на телефоне — родная ---------- */
