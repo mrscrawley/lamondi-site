@@ -21,8 +21,8 @@
 <meta name="theme-color" content="#F8F1E7">
 <link rel="icon" href="assets/favicon.svg">
 <link rel="preload" href="assets/fonts/outfit-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="css/style.css?v=23">
-<script src="js/menu-data.js?v=6" defer></script>
+<link rel="stylesheet" href="css/style.css?v=25">
+<script src="js/menu-data.js?v=7" defer></script>
 <script src="assets/js/lenis.min.js" defer></script>
 <script src="js/site.js?v=30" defer></script>
 </head>
@@ -36,10 +36,6 @@
     </div>
   </section>
 
-  <!-- лента блюд -->
-  <section class="container">
-    <div class="dish-strip" id="dish-strip"></div>
-  </section>
 
   <div class="container">
     <div class="menu-groups" id="menu-groups" role="tablist"></div>
@@ -63,12 +59,6 @@ document.addEventListener("DOMContentLoaded", () => {
     mediterran: ["salate, pasta, fisch, fleisch, dessert", "salads, pasta, fish, meat, dessert"],
     bar: ["cocktails, wein, bier, kaffee", "cocktails, wine, beer, coffee"],
   };
-  // лента фото над меню — своя для каждой части; у бара фото нет, лента скрыта
-  const STRIP = {
-    asiatisch: ["sushi/mix-lamondi", "sushi/nigiri-sake", "sushi/ura-california", "sushi/sashimi-moriawase", "sushi/hoso-sake", "sushi/futo-maguro"],
-    mediterran: ["dish-fisch-curry", "dish-meeresfruechte", "dish-fisch-tomate", "dish-rind", "dish-tagesgericht", "dish-obst"],
-  };
-  const stripEl = document.getElementById("dish-strip");
   const groups = document.getElementById("menu-groups");
   const tabsEl = document.getElementById("menu-tabs");
   const menuEl = document.getElementById("menu");
@@ -98,9 +88,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const on = b.dataset.group === g.id;
       b.classList.toggle("is-active", on); b.setAttribute("aria-selected", on);
     });
-    const imgs = STRIP[g.id];
-    stripEl.hidden = !imgs;
-    if (imgs) stripEl.innerHTML = imgs.map(n => `<figure><img src="assets/img/${n}.webp?v=5" alt=""></figure>`).join("");
     tabsEl.innerHTML = g.cats.map(c => `<a href="#${c.id}">${T(c.de, c.en)}</a>`).join("");
     menuEl.innerHTML = g.cats.map(c => `
       <section class="menu-cat" id="${c.id}">
@@ -129,7 +116,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const b = e.target.closest("button"); if (!b) return;
     show(b.dataset.group);
     history.replaceState(null, "", "#" + b.dataset.group);
-    window.lenis ? window.lenis.scrollTo(groups, { offset: -90, duration: 1 }) : groups.scrollIntoView({ behavior: "smooth" });
   });
 
   // фото блюда крупно

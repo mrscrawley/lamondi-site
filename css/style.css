@@ -368,7 +368,7 @@ html[lang="en"] [data-l="de"] { display: none !important; }
 .dish-strip figure { margin: 0; aspect-ratio: 1; overflow: hidden; }
 .dish-strip figure + figure { border-left: 1px solid var(--line); }
 .dish-strip img { width: 100%; height: 100%; object-fit: cover; transition: transform .8s; animation: fadeIn .6s ease both; }
-.dish-strip[hidden] { display: none; }
+#menu { min-height: 100vh; }   /* при смене раздела страница не укорачивается — без прыжка прокрутки */
 .dish-strip img[src*="sushi/"] { object-fit: contain; padding: 8%; background: var(--bg); }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 .dish-strip figure:hover img { transform: scale(1.05) rotate(2deg); }
@@ -410,6 +410,8 @@ html[lang="en"] [data-l="de"] { display: none !important; }
 .menu-groups button:hover { background: var(--panel); }
 .menu-groups button.is-active { background: var(--brand); color: var(--bg); }
 .menu-groups button.is-active small { color: var(--glow); }
+.menu-groups button:focus { outline: none; }
+.menu-groups button:focus-visible { outline: 2px solid var(--ink); outline-offset: -4px; }
 @media (max-width: 599px) { .menu-groups button { padding: 16px 10px 14px; } .menu-groups small { display: none; } }
 .menu-tabs { margin-top: -1px; }
 .dish sup { font-size: 9.5px; color: var(--muted); margin-left: 3px; font-weight: 400; }
