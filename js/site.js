@@ -152,30 +152,32 @@ function initLogoDock() {
   document.body.append(ghost);
   const g0 = ghost.getBoundingClientRect(), i0 = ghost.firstChild.getBoundingClientRect();
   const ox = i0.left - g0.left, oy = i0.top - g0.top;   // слово внутри копии смещено от её угла — учитываем
-  const r = hero.getBoundingClientRect(), d = head.getBoundingClientRect();
-  const top0 = r.top + scrollY, left0 = r.left, k = d.width / r.width;
-  const sub = document.querySelector(".hero .hero__sub");
-  const hb = document.querySelector(".site-header").getBoundingClientRect().bottom;
-  const B0 = (sub ? sub.getBoundingClientRect().top : r.bottom) + scrollY;   // «bayreuth» под словом
-  const H = r.height, dist = Math.max(160, B0 - hb);   // к моменту, когда «bayreuth» дойдёт до шапки, слово уже в шапке
+  const gw = i0.width;                                  // ширина копии в масштабе 1
+  const sub = document.querySelector(".hero .hero__sub"), bar = document.querySelector(".site-header");
   hero.style.visibility = "hidden";
   let queued = false, docked = null;
   const tick = () => {
     queued = false;
-    const sY = scrollY, p = Math.min(1, Math.max(0, sY / dist));
+    // геометрию берём каждый кадр с настоящего (скрытого) слова — копия всегда стоит точно на его месте,
+    // даже если шрифт догрузился или ширина окна поменялась
+    const sY = scrollY, r = hero.getBoundingClientRect(), d = head.getBoundingClientRect();
+    const top0 = r.top + sY, B0 = (sub ? sub.getBoundingClientRect().top : r.bottom) + sY;
+    const dist = Math.max(160, B0 - bar.getBoundingClientRect().bottom);
+    const p = Math.min(1, Math.max(0, sY / dist));
     const shrink = 1 - Math.pow(1 - p, 2);             // уменьшается сразу
     const rise = p * p * p;                             // в полосу шапки заходит только в конце, уже маленьким
-    const x = left0 + (d.left - left0) * shrink, y = top0 + (d.top - top0) * rise;
-    // не наезжать на «bayreuth», который уезжает вверх вместе со страницей
-    const room = (B0 - sY) - y - 6;
-    const sc = p >= 1 ? k : Math.max(k, Math.min(1 + (k - 1) * shrink, room / H));
+    const x = r.left + (d.left - r.left) * shrink, y = top0 + (d.top - top0) * rise;
+    // не наезжать на «bayreuth», который уезжает вверх: доля свободного места от того, что было в покое
+    const room = ((B0 - sY) - y) / (B0 - top0);
+    const w = p >= 1 ? d.width : Math.max(d.width, Math.min(r.width + (d.width - r.width) * shrink, r.width * room));
+    const sc = w / gw;
     ghost.style.transform = `translate3d(${(x - ox * sc).toFixed(1)}px,${(y - oy * sc).toFixed(1)}px,0) scale(${sc.toFixed(4)})`;
     const inHead = p >= 1;
     if (inHead !== docked) { docked = inHead; root.classList.toggle("dock-in", inHead); ghost.style.opacity = inHead ? 0 : 1; }
   };
   const onScroll = () => { if (!queued) { queued = true; requestAnimationFrame(tick); } };
-  addEventListener("scroll", onScroll, { passive: true }); tick();
-  dockOff = () => { removeEventListener("scroll", onScroll); ghost.remove(); hero.style.visibility = ""; };
+  addEventListener("scroll", onScroll, { passive: true }); addEventListener("resize", onScroll); tick();
+  dockOff = () => { removeEventListener("scroll", onScroll); removeEventListener("resize", onScroll); ghost.remove(); hero.style.visibility = ""; };
 }
 
 /* ---------- огромный вордмарк во всю ширину ---------- */

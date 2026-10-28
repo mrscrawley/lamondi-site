@@ -21,9 +21,9 @@
 <meta name="theme-color" content="#F8F1E7">
 <link rel="icon" href="assets/favicon.svg">
 <link rel="preload" href="assets/fonts/outfit-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="css/style.css?v=16">
+<link rel="stylesheet" href="css/style.css?v=18">
 <script src="js/menu-data.js?v=6" defer></script>
-<script src="js/site.js?v=21" defer></script>
+<script src="js/site.js?v=23" defer></script>
 </head>
 <body>
 <header id="site-header"></header>
@@ -99,7 +99,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     const imgs = STRIP[g.id];
     stripEl.hidden = !imgs;
-    if (imgs) stripEl.innerHTML = imgs.map(n => `<figure><img src="assets/img/${n}.webp?v=4" alt=""></figure>`).join("");
+    if (imgs) stripEl.innerHTML = imgs.map(n => `<figure><img src="assets/img/${n}.webp?v=5" alt=""></figure>`).join("");
     tabsEl.innerHTML = g.cats.map(c => `<a href="#${c.id}">${T(c.de, c.en)}</a>`).join("");
     menuEl.innerHTML = g.cats.map(c => `
       <section class="menu-cat" id="${c.id}">

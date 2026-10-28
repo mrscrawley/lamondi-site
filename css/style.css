@@ -290,11 +290,23 @@ html[lang="en"] [data-l="de"] { display: none !important; }
 
 /* ---------- кейсы «картинка + текст» ---------- */
 .split { display: grid; grid-template-columns: 1fr; margin-top: 28px; }
-.cat-gallery { display: grid; grid-template-columns: 1fr; border: 1px solid var(--line); border-top: 0; }
-.cat-gallery figure { margin: 0; aspect-ratio: 3 / 2; overflow: hidden; }
-.cat-gallery figure + figure { border-top: 1px solid var(--line); }
-.cat-gallery img { width: 100%; height: 100%; object-fit: cover; }
-@media (min-width: 760px) { .cat-gallery { grid-template-columns: 1fr 1fr; } .cat-gallery figure + figure { border-top: 0; border-left: 1px solid var(--line); } }
+/* feiern + catering: журнальная раскладка — текст и большой кадр, ниже два кадра со смещением, много воздуха */
+.cat { display: grid; grid-template-columns: 1fr; gap: 28px; margin-top: 28px; }
+.cat figure { margin: 0; }
+.cat figure img { display: block; width: 100%; aspect-ratio: 3 / 2; object-fit: cover; border: 1px solid var(--line); }
+.cat figcaption { margin-top: 10px; font-size: 12.5px; color: var(--muted); text-transform: lowercase; letter-spacing: .02em; display: flex; align-items: center; gap: 10px; }
+.cat figcaption::before { content: ""; width: 6px; height: 6px; background: var(--amber); flex: none; }
+.cat__text { border: 1px solid var(--line); padding: 32px 28px; display: flex; flex-direction: column; justify-content: center; gap: 4px; }
+.cat__text .btn { align-self: flex-start; margin-top: 14px; }
+@media (min-width: 900px) {
+  .cat { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 32px; row-gap: 56px; }
+  .cat__text { grid-column: 1 / 6; grid-row: 1; padding: 48px 44px; }
+  .cat__main { grid-column: 6 / 13; grid-row: 1; }
+  .cat .cat__main img { aspect-ratio: 4 / 3; }
+  .cat__a { grid-column: 1 / 8; grid-row: 2; }
+  .cat .cat__b { grid-column: 9 / 13; grid-row: 2; margin-top: 96px; }
+  .cat .cat__b img { aspect-ratio: 4 / 5; }
+}
 .split__img { aspect-ratio: 3 / 2; overflow: hidden; }
 .split__img img { width: 100%; height: 100%; object-fit: cover; }
 .split__text { padding: 40px 28px; display: flex; flex-direction: column; justify-content: center; }
