@@ -269,23 +269,30 @@ function fitWords() {
 function placeDots() {
   const FS = 400, cv = document.createElement("canvas"), ctx = cv.getContext("2d", { willReadFrequently: true });
   cv.width = FS; cv.height = FS * 1.4;
+  const X0 = 50;
+  // всё меряем по нарисованным пикселям: метрики measureText в Safari для «ı» неточные (точка выходила шире ножки)
+  const inkRun = (data, n, step) => {                // первая сплошная полоса краски вдоль линии
+    let a = -1, b = -1;
+    for (let i = 0; i < n; i++) {
+      const ink = data[i * step + 3] > 128;
+      if (ink && a < 0) a = i;
+      if (!ink && a >= 0) { b = i; break; }
+    }
+    return [a, b];
+  };
   document.querySelectorAll(".idot").forEach(el => {
     const cs = getComputedStyle(el);
     ctx.font = `${cs.fontWeight} ${FS}px ${cs.fontFamily}`;
-    const m = ctx.measureText("ı");
-    const left = -m.actualBoundingBoxLeft, w = m.actualBoundingBoxRight - left;
-    const base = m.fontBoundingBoxAscent;            // базовая линия от верха content-area
+    const base = Math.round(ctx.measureText("ı").fontBoundingBoxAscent || FS);  // базовая линия от верха content-area
     ctx.clearRect(0, 0, cv.width, cv.height);
-    ctx.fillText("i", 50, base);
-    const x = Math.round(50 + left + w / 2), px = ctx.getImageData(x, 0, 1, cv.height).data;
-    let top = -1, bottom = -1;                        // первая сплошная полоса сверху — точка
-    for (let y = 0; y < cv.height; y++) {
-      const ink = px[y * 4 + 3] > 128;
-      if (ink && top < 0) top = y;
-      if (!ink && top >= 0) { bottom = y; break; }
-    }
-    const dotH = bottom - top, cy = top + dotH / 2;   // центр родной точки
-    el.style.setProperty("--dl", (left / FS).toFixed(4) + "em");
+    ctx.fillText("ı", X0, base);
+    const [sl, sr] = inkRun(ctx.getImageData(0, base - Math.round(FS * .2), cv.width, 1).data, cv.width, 4);  // ножка чуть выше базовой линии
+    ctx.clearRect(0, 0, cv.width, cv.height);
+    ctx.fillText("i", X0, base);
+    const [top, bottom] = inkRun(ctx.getImageData(Math.round((sl + sr) / 2), 0, 1, cv.height).data, cv.height, 4);
+    if (sl < 0 || sr <= sl || top < 0 || bottom <= top) return;   // не удалось — останутся значения из CSS
+    const w = sr - sl, cy = (top + bottom) / 2;      // ширина ножки и центр родной точки
+    el.style.setProperty("--dl", ((sl - X0) / FS).toFixed(4) + "em");
     el.style.setProperty("--dw", (w / FS).toFixed(4) + "em");
     el.style.setProperty("--dt", ((cy - w / 2) / FS).toFixed(4) + "em");
   });
