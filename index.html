@@ -23,9 +23,9 @@
 <link rel="preload" href="assets/fonts/outfit-latin.woff2" as="font" type="font/woff2" crossorigin>
 <!-- страницы сайта готовятся заранее, при наведении на ссылку (Chrome) — переход почти мгновенный -->
 <script type="speculationrules">{"prerender":[{"where":{"selector_matches":"a[href$='.html'], a[href*='.html#'], a[href*='.html?']"},"eagerness":"moderate"}],"prefetch":[{"where":{"selector_matches":"a[href$='.html'], a[href*='.html#'], a[href*='.html?']"},"eagerness":"eager"}]}</script>
-<link rel="stylesheet" href="css/style.css?v=31">
+<link rel="stylesheet" href="css/style.css?v=32">
 <script src="assets/js/lenis.min.js" defer></script>
-<script src="js/site.js?v=34" defer></script>
+<script src="js/site.js?v=35" defer></script>
 </head>
 <body>
 <header id="site-header"></header>
@@ -82,9 +82,9 @@
         <aside class="details__side">
           <div class="side-block">
             <h2 class="h6"><span data-l="de">tisch reservieren<br>im lamondi</span><span data-l="en">make a reservation<br>at lamondi</span></h2>
-            <p><span data-l="de">Wir freuen uns über Reservierungen und heißen auch spontane Gäste herzlich willkommen.</span><span data-l="en">We welcome reservations as well as walk-ins.</span></p>
-            <a class="btn btn--block" href="reservierung.html"><span data-l="de">jetzt tisch anfragen</span><span data-l="en">request a table</span></a>
-            <p><span data-l="de">Für größere Gruppen oder besondere Wünsche rufen Sie uns gerne an: </span><span data-l="en">For larger parties or special requests, please call us at </span><a data-phone></a>.</p>
+            <p><span data-l="de">Reservierungen nehmen wir telefonisch entgegen — spontane Gäste sind ebenfalls herzlich willkommen.</span><span data-l="en">Reservations are taken by phone — walk-ins are always welcome too.</span></p>
+            <a class="btn btn--block" data-tel href="tel:+499212305699"><span data-l="de">anrufen:&nbsp;</span><span data-l="en">call:&nbsp;</span><span data-phone-text>0921 2305699</span></a>
+            <p><span data-l="de">Feiern und Catering können Sie auch </span><span data-l="en">Parties and catering can also be </span><a href="reservierung.html#catering-anfrage"><span data-l="de">online anfragen</span><span data-l="en">requested online</span></a>.</p>
           </div>
           <div class="side-block">
             <h2 class="h6"><span data-l="de">so finden<br>sie uns</span><span data-l="en">how to<br>find us</span></h2>
@@ -150,7 +150,7 @@
       <div class="cat__text reveal">
         <p class="text-xl"><span data-l="de">Geburtstag, Firmenfeier oder Familienfest — bei uns im lamondi oder bei Ihnen vor Ort.</span><span data-l="en">Birthdays, company events or family celebrations — here at lamondi or at your place.</span></p>
         <p><span data-l="de">Wir richten Ihre Feier bei uns im Restaurant aus oder bringen Sushi-Platten und Fingerfood als Catering zu Ihnen. Menü und Mengen stimmen wir gemeinsam mit Ihnen ab.</span><span data-l="en">We host your celebration here in the restaurant or bring sushi platters and finger food to you as catering. We plan the menu and quantities together with you.</span></p>
-        <a class="btn" href="reservierung.html#gruppe"><span data-l="de">anfrage senden</span><span data-l="en">send an enquiry</span></a>
+        <a class="btn" href="reservierung.html#catering-anfrage"><span data-l="de">anfrage senden</span><span data-l="en">send an enquiry</span></a>
       </div>
       <figure class="cat__main reveal"><img src="assets/img/catering-buffet.webp?v=2" srcset="assets/img/catering-buffet-800.webp?v=2 800w, assets/img/catering-buffet.webp?v=2 1264w" sizes="(max-width: 760px) 100vw, 58vw" alt="Catering-Buffet von lamondi von oben: Fingerfood in Gläsern, weiße Podeste, Hortensien" loading="lazy">
         <figcaption><span data-l="de">fingerfood-buffet von oben</span><span data-l="en">finger food buffet from above</span></figcaption></figure>

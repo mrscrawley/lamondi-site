@@ -376,15 +376,15 @@ function initForms() {
       e.preventDefault();
       const f = Object.fromEntries(new FormData(rf));
       const msg = rf.querySelector(".form-msg");
-      const body = `Reservierungsanfrage\n\nDatum: ${f.date}\nUhrzeit: ${f.time}\nPersonen: ${f.guests}\nName: ${f.name}\nTelefon: ${f.phone}\nE-Mail: ${f.email || "-"}\n\n${f.note || ""}`;
+      const body = `Anfrage Feier / Catering\n\nArt: ${f.kind}\nDatum: ${f.date}\nPersonen: ${f.guests}\nName: ${f.name}\nTelefon: ${f.phone}\nE-Mail: ${f.email || "-"}\n\n${f.note || ""}`;
       if (CONFIG.email) {
-        location.href = `mailto:${CONFIG.email}?subject=${encodeURIComponent("Reservierung " + f.date + " " + f.time)}&body=${encodeURIComponent(body)}`;
+        location.href = `mailto:${CONFIG.email}?subject=${encodeURIComponent(f.kind + " " + f.date)}&body=${encodeURIComponent(body)}`;
         msg.className = "form-msg ok";
         msg.innerHTML = T("Ihr E-Mail-Programm öffnet sich — bitte senden Sie die Anfrage ab.", "Your e-mail app is opening — please send the request.");
       } else {
         msg.className = "form-msg ok";
-        msg.innerHTML = T(`Online-Reservierung folgt in Kürze. Bitte rufen Sie uns an: <a href="tel:${CONFIG.tel}">${CONFIG.phone}</a>`,
-                          `Online booking is coming soon. Please call us: <a href="tel:${CONFIG.tel}">${CONFIG.phone}</a>`);
+        msg.innerHTML = T(`Online-Anfragen folgen in Kürze. Bitte rufen Sie uns an: <a href="tel:${CONFIG.tel}">${CONFIG.phone}</a>`,
+                          `Online enquiries are coming soon. Please call us: <a href="tel:${CONFIG.tel}">${CONFIG.phone}</a>`);
       }
     });
   }
@@ -394,6 +394,8 @@ function initForms() {
 function fillConfig() {
   document.querySelectorAll("[data-hours]").forEach(e => e.innerHTML = hoursHTML());
   document.querySelectorAll("[data-phone]").forEach(e => { e.href = "tel:" + CONFIG.tel; e.textContent = CONFIG.phone; });
+  document.querySelectorAll("[data-tel]").forEach(e => e.href = "tel:" + CONFIG.tel);
+  document.querySelectorAll("[data-phone-text]").forEach(e => e.textContent = CONFIG.phone);
   document.querySelectorAll("[data-maps]").forEach(e => e.href = CONFIG.maps);
 }
 

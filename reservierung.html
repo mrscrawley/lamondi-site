@@ -6,13 +6,13 @@
 <title>Reservierung | lamondi Bayreuth</title>
 <meta name="title-de" content="Reservierung | lamondi Bayreuth">
 <meta name="title-en" content="Reservations | lamondi Bayreuth">
-<meta name="description" content="Tisch reservieren im lamondi Bayreuth, gegenüber dem Hauptbahnhof. Auch für Feiern und Catering.">
+<meta name="description" content="Tisch reservieren im lamondi Bayreuth telefonisch unter 0921 2305699. Anfragen für Feiern und Catering online.">
 <!-- Превью ссылки. Сейчас адрес GitHub Pages; при переезде на свой домен заменить https://mrscrawley.github.io/lamondi-site/ -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="lamondi Bayreuth">
 <meta property="og:locale" content="de_DE">
 <meta property="og:title" content="Reservierung | lamondi Bayreuth">
-<meta property="og:description" content="Tisch reservieren im lamondi Bayreuth, gegenüber dem Hauptbahnhof. Auch für Feiern und Catering.">
+<meta property="og:description" content="Tisch reservieren im lamondi Bayreuth telefonisch unter 0921 2305699. Anfragen für Feiern und Catering online.">
 <meta property="og:image" content="https://mrscrawley.github.io/lamondi-site/assets/og-image.jpg">
 <meta property="og:url" content="https://mrscrawley.github.io/lamondi-site/reservierung.html">
 <meta property="og:image:width" content="1200">
@@ -23,9 +23,9 @@
 <link rel="preload" href="assets/fonts/outfit-latin.woff2" as="font" type="font/woff2" crossorigin>
 <!-- страницы сайта готовятся заранее, при наведении на ссылку (Chrome) — переход почти мгновенный -->
 <script type="speculationrules">{"prerender":[{"where":{"selector_matches":"a[href$='.html'], a[href*='.html#'], a[href*='.html?']"},"eagerness":"moderate"}],"prefetch":[{"where":{"selector_matches":"a[href$='.html'], a[href*='.html#'], a[href*='.html?']"},"eagerness":"eager"}]}</script>
-<link rel="stylesheet" href="css/style.css?v=31">
+<link rel="stylesheet" href="css/style.css?v=32">
 <script src="assets/js/lenis.min.js" defer></script>
-<script src="js/site.js?v=34" defer></script>
+<script src="js/site.js?v=35" defer></script>
 </head>
 <body>
 <header id="site-header"></header>
@@ -35,32 +35,30 @@
     <div class="container" style="position:relative">
       <h1><span class="hero__word" data-fit=".82"><span data-l="de">reservierung</span><span data-l="en">reservations</span></span></h1>
       <div class="page-intro">
-        <p class="text-xl"><span data-l="de">Reservieren Sie Ihren Tisch — spontane Gäste sind ebenfalls herzlich willkommen.</span><span data-l="en">Book your table — walk-ins are always welcome too.</span></p>
+        <p class="text-xl"><span data-l="de">Tische reservieren wir telefonisch — spontane Gäste sind ebenfalls herzlich willkommen.</span><span data-l="en">Table reservations are taken by phone — walk-ins are always welcome too.</span></p>
+        <a class="btn btn--solid btn--menu res-call" data-tel href="tel:+499212305699"><span data-l="de">anrufen</span><span data-l="en">call</span> <span data-phone-text>0921 2305699</span><svg class="btn__arrow" viewBox="0 0 16 10" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M0 5h14M10 1l4 4-4 4"/></svg></a>
       </div>
     </div>
   </section>
 
   <section class="container">
     <div class="res-grid">
-      <form class="res-form" data-reservation>
-        <h2 class="h6" style="margin-bottom:24px"><span data-l="de">ihre anfrage</span><span data-l="en">your request</span></h2>
+      <form class="res-form" id="catering-anfrage" data-reservation>
+        <h2 class="h6" style="margin-bottom:24px"><span data-l="de">anfrage für feiern + catering</span><span data-l="en">enquiry for parties + catering</span></h2>
+        <p style="margin:-10px 0 24px"><span data-l="de">Feier bei uns im lamondi oder Catering bei Ihnen — wir melden uns zur Abstimmung.</span><span data-l="en">A party here at lamondi or catering at your place — we'll get back to you to plan the details.</span></p>
         <div class="fields">
           <div class="field"><label for="r-date"><span data-l="de">datum</span><span data-l="en">date</span></label><input id="r-date" name="date" type="date" required></div>
-          <div class="field"><label for="r-time"><span data-l="de">uhrzeit</span><span data-l="en">time</span></label>
-            <select id="r-time" name="time" required>
-              <option>11:30</option><option>12:00</option><option>12:30</option><option>13:00</option><option>13:30</option>
-              <option>17:00</option><option>17:30</option><option>18:00</option><option selected>18:30</option><option>19:00</option><option>19:30</option><option>20:00</option><option>20:30</option><option>21:00</option>
+          <div class="field"><label for="r-kind"><span data-l="de">art</span><span data-l="en">type</span></label>
+            <select id="r-kind" name="kind">
+              <option value="Feier im lamondi" data-de="Feier im lamondi" data-en="Party at lamondi">Feier im lamondi</option>
+              <option value="Catering" data-de="Catering bei Ihnen" data-en="Catering at your place">Catering bei Ihnen</option>
             </select></div>
-          <div class="field" id="gruppe"><label for="r-guests"><span data-l="de">personen</span><span data-l="en">guests</span></label>
-            <select id="r-guests" name="guests">
-              <option>1</option><option selected>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option>
-              <option value="9+" data-de="9 oder mehr (Gruppe)" data-en="9 or more (group)">9 oder mehr (Gruppe)</option>
-            </select></div>
+          <div class="field" id="gruppe"><label for="r-guests"><span data-l="de">personen</span><span data-l="en">guests</span></label><input id="r-guests" name="guests" type="number" min="5" step="1" inputmode="numeric" placeholder="20" required></div>
           <div class="field"><label for="r-name">name</label><input id="r-name" name="name" type="text" autocomplete="name" required></div>
           <div class="field"><label for="r-phone"><span data-l="de">telefon</span><span data-l="en">phone</span></label><input id="r-phone" name="phone" type="tel" autocomplete="tel" required></div>
           <div class="field"><label for="r-email"><span data-l="de">e-mail (optional)</span><span data-l="en">e-mail (optional)</span></label><input id="r-email" name="email" type="email" autocomplete="email"></div>
           <div class="field full"><label for="r-note"><span data-l="de">anmerkungen</span><span data-l="en">notes</span></label>
-            <textarea id="r-note" name="note" data-ph-de="Anlass, Allergien, Kinderstuhl …" data-ph-en="Occasion, allergies, high chair …" placeholder="Anlass, Allergien, Kinderstuhl …"></textarea></div>
+            <textarea id="r-note" name="note" data-ph-de="Anlass, Uhrzeit, Wünsche, Lieferadresse …" data-ph-en="Occasion, time, wishes, delivery address …" placeholder="Anlass, Uhrzeit, Wünsche, Lieferadresse …"></textarea></div>
         </div>
         <button class="btn btn--solid" type="submit" style="margin-top:26px"><span data-l="de">anfrage senden</span><span data-l="en">send request</span></button>
         <p class="form-msg" aria-live="polite"></p>
@@ -68,9 +66,9 @@
 
       <aside class="res-side">
         <div class="side-block">
-          <h2 class="h6"><span data-l="de">lieber anrufen?</span><span data-l="en">rather call?</span></h2>
+          <h2 class="h6"><span data-l="de">tisch reservieren</span><span data-l="en">book a table</span></h2>
           <p class="text-xl" style="margin-top:10px"><a data-phone></a></p>
-          <p><span data-l="de">Für Gruppen ab 9 Personen, Feiern, Firmenessen und Catering besprechen wir alles gerne telefonisch.</span><span data-l="en">For groups of 9 or more, parties, business dinners and catering, we're happy to sort everything by phone.</span></p>
+          <p><span data-l="de">Reservierungen nehmen wir ausschließlich telefonisch während der Öffnungszeiten entgegen.</span><span data-l="en">Reservations are taken by phone only, during opening hours.</span></p>
         </div>
         <div class="side-block">
           <h2 class="h6"><span data-l="de">öffnungszeiten</span><span data-l="en">opening hours</span></h2>
