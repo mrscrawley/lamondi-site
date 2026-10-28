@@ -228,7 +228,17 @@ function landOnHash() {
   const t = location.hash && anchorTarget(location.hash);
   if (!t) return;
   const y = t.getBoundingClientRect().top + scrollY - headerH();
-  window.lenis ? window.lenis.scrollTo(y, { immediate: true }) : scrollTo(0, y);
+  window.lenis ? window.lenis.scrollTo(y, { immediate: true, force: true }) : scrollTo(0, y);
+}
+// страница могла быть подготовлена заранее (speculationrules): при показе Chrome сам
+// прокручивает к #секции — поправить ещё раз в момент показа и после загрузки картинок
+function landOnHashLater() {
+  addEventListener("hashchange", landOnHash);   // смена только якоря: назад/вперёд, ввод адреса
+  if (!location.hash) return;
+  const again = () => requestAnimationFrame(() => requestAnimationFrame(landOnHash));
+  if (document.prerendering) document.addEventListener("prerenderingchange", again, { once: true });
+  if (document.readyState !== "complete") addEventListener("load", again, { once: true });
+  addEventListener("pageshow", e => { if (e.persisted) again(); });
 }
 
 /* ---------- огромный вордмарк во всю ширину ---------- */
@@ -425,5 +435,6 @@ document.addEventListener("DOMContentLoaded", () => {
   initForms();
   initVideo();
   document.fonts?.ready.then(() => { fitWords(); placeDots(); initLogoDock(); landOnHash(); });
+  landOnHashLater();
   let rz; addEventListener("resize", () => { fitWords(); clearTimeout(rz); rz = setTimeout(initLogoDock, 150); });
 });
