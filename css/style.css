@@ -442,6 +442,7 @@ html[lang="en"] [data-l="de"] { display: none !important; }
 @media (min-width: 900px) { .story { grid-template-columns: 1fr 1fr; gap: 80px; } }
 .story__img { border: 1px solid var(--line); aspect-ratio: 4 / 5; overflow: hidden; }
 .story__img img { width: 100%; height: 100%; object-fit: cover; }
+.story__img--free { border: 0; } /* здание без неба — растворено в фоне */
 .values { display: grid; grid-template-columns: 1fr; border: 1px solid var(--line); margin-top: 28px; }
 .values > div { padding: 32px 28px; }
 .values > div + div { border-top: 1px solid var(--line); }
