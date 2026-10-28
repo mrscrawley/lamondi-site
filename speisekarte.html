@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Speisekarte | lamondi Bayreuth</title>
+<meta name="title-de" content="Speisekarte | lamondi Bayreuth">
+<meta name="title-en" content="Menu | lamondi Bayreuth">
+<meta name="description" content="Speisekarte des lamondi in Bayreuth: Sushi, Sashimi, Dumplings und Udon, mediterrane Küche mit Salaten, Pasta, Fisch und Fleisch, dazu Cocktails, Wein und Bier.">
+<!-- Превью ссылки. TODO: когда будет домен, сделать адреса абсолютными (https://домен/assets/og-image.jpg) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="lamondi Bayreuth">
+<meta property="og:locale" content="de_DE">
+<meta property="og:title" content="Speisekarte | lamondi Bayreuth">
+<meta property="og:description" content="Speisekarte des lamondi in Bayreuth: Sushi, Sashimi, Dumplings und Udon, mediterrane Küche mit Salaten, Pasta, Fisch und Fleisch, dazu Cocktails, Wein und Bier.">
+<meta property="og:image" content="assets/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#F8F1E7">
+<link rel="icon" href="assets/favicon.svg">
+<link rel="preload" href="assets/fonts/outfit-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/style.css?v=14">
+<script src="js/menu-data.js?v=6" defer></script>
+<script src="js/site.js?v=17" defer></script>
+</head>
+<body>
+<header id="site-header"></header>
+
+<main>
+  <section class="hero hero--page">
+    <div class="container" style="position:relative">
+      <h1><span class="hero__word" data-fit=".82"><span data-l="de">speisekarte</span><span data-l="en">menu</span></span></h1>
+    </div>
+  </section>
+
+  <!-- лента блюд -->
+  <section class="container">
+    <div class="dish-strip" id="dish-strip"></div>
+  </section>
+
+  <div class="container">
+    <div class="menu-groups" id="menu-groups" role="tablist"></div>
+    <nav class="menu-tabs" aria-label="Kategorien" id="menu-tabs"></nav>
+    <div id="menu"></div>
+    <div class="menu-note">
+      <p><span data-l="de">Genießen Sie auch unsere wechselnden Tagesgerichte — fragen Sie unser Serviceteam.</span><span data-l="en">Ask our team about the changing dishes of the day.</span></p>
+      <p><span data-l="de">Alle Preise in Euro inkl. MwSt. Bei Allergien sprechen Sie uns bitte an — gerne geben wir Ihnen die Allergiker-Karte. Abholung möglich: </span><span data-l="en">All prices in euro incl. VAT. If you have allergies, please ask us for the allergen card. Takeaway available: </span><a data-phone></a></p>
+      <p id="additives"></p>
+    </div>
+  </div>
+</main>
+
+<footer id="site-footer"></footer>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const T = (de, en) => `<span data-l="de">${de}</span><span data-l="en">${en ?? de}</span>`;
+  const SUB = {
+    asiatisch: ["sushi, sashimi, dumplings, udon, suppen", "sushi, sashimi, dumplings, udon, soups"],
+    mediterran: ["salate, pasta, fisch, fleisch, dessert", "salads, pasta, fish, meat, dessert"],
+    bar: ["cocktails, wein, bier, kaffee", "cocktails, wine, beer, coffee"],
+  };
+  // лента фото над меню — своя для каждой части; у бара фото нет, лента скрыта
+  const STRIP = {
+    asiatisch: ["sushi/mix-lamondi", "sushi/nigiri-sake", "sushi/ura-california", "sushi/sashimi-moriawase", "sushi/hoso-sake", "sushi/futo-maguro"],
+    mediterran: ["dish-fisch-curry", "dish-meeresfruechte", "dish-fisch-tomate", "dish-rind", "dish-thunfisch", "dish-obst"],
+  };
+  const stripEl = document.getElementById("dish-strip");
+  const groups = document.getElementById("menu-groups");
+  const tabsEl = document.getElementById("menu-tabs");
+  const menuEl = document.getElementById("menu");
+
+  groups.innerHTML = MENU.map(g => `<button type="button" role="tab" data-group="${g.id}">
+    <b>${T(g.de, g.en)}</b><small>${T(...SUB[g.id])}</small></button>`).join("");
+  document.getElementById("additives").innerHTML = T(
+    "Zusätze: " + ADDITIVES.map((a, i) => `${i + 1} ${a[0]}`).join(" · ") + ". Alle Angaben ohne Gewähr.",
+    "Additives: " + ADDITIVES.map((a, i) => `${i + 1} ${a[1]}`).join(" · ") + ". All information without guarantee.");
+
+  const dish = (d, c) => {
+    const vol = d.v ? `<span class="vol">${T(d.v, d.v.replace(",", "."))}</span>` : "";
+    const desc = d.dDe ? T(d.dDe, d.dEn) : "";
+    const thumb = d.img ? `<button class="dish__thumb" type="button" data-zoom="assets/img/sushi/${d.img}.webp?v=4" aria-label="Foto"><img src="assets/img/sushi/${d.img}-s.webp?v=4" alt="" loading="lazy"></button>` : "";
+    return `<div class="dish${d.img ? " dish--img" : ""}">
+      ${thumb}
+      <h3>${T(d.de, d.en)}${d.z ? `<sup>${d.z}</sup>` : ""}</h3>
+      <span class="price">${d.p} €${c.unitDe ? `<small> / ${T(c.unitDe, c.unitEn)}</small>` : ""}</span>
+      ${vol || desc ? `<p>${[vol, desc].filter(Boolean).join(" · ")}</p>` : ""}
+    </div>`;
+  };
+
+  let io;
+  function show(id, scrollTo) {
+    const g = MENU.find(x => x.id === id) || MENU[0];
+    groups.querySelectorAll("button").forEach(b => {
+      const on = b.dataset.group === g.id;
+      b.classList.toggle("is-active", on); b.setAttribute("aria-selected", on);
+    });
+    const imgs = STRIP[g.id];
+    stripEl.hidden = !imgs;
+    if (imgs) stripEl.innerHTML = imgs.map(n => `<figure><img src="assets/img/${n}.webp?v=4" alt=""></figure>`).join("");
+    tabsEl.innerHTML = g.cats.map(c => `<a href="#${c.id}">${T(c.de, c.en)}</a>`).join("");
+    menuEl.innerHTML = g.cats.map(c => `
+      <section class="menu-cat" id="${c.id}">
+        <div class="menu-cat__head">
+          <h2 class="h3">${T(c.de, c.en)}</h2>
+          ${c.noteDe ? `<p>${T(c.noteDe, c.noteEn)}</p>` : ""}
+        </div>
+        <div class="menu-list">${c.items.map(d => dish(d, c)).join("")}</div>
+      </section>`).join("");
+    // подсветка активной вкладки
+    io?.disconnect();
+    const tabs = [...tabsEl.querySelectorAll("a")];
+    io = new IntersectionObserver(es => es.forEach(e => {
+      if (!e.isIntersecting) return;
+      tabs.forEach(t => {
+        const on = t.getAttribute("href") === "#" + e.target.id;
+        t.classList.toggle("is-active", on);
+        if (on) t.scrollIntoView({ block: "nearest", inline: "nearest" });
+      });
+    }), { rootMargin: "-45% 0px -50% 0px" });
+    menuEl.querySelectorAll(".menu-cat").forEach(s => io.observe(s));
+    if (scrollTo) (document.fonts?.ready ?? Promise.resolve()).then(() => document.getElementById(scrollTo)?.scrollIntoView());
+  }
+
+  groups.addEventListener("click", e => {
+    const b = e.target.closest("button"); if (!b) return;
+    show(b.dataset.group);
+    history.replaceState(null, "", "#" + b.dataset.group);
+    groups.scrollIntoView({ behavior: "smooth" });
+  });
+
+  // фото блюда крупно
+  const lb = document.createElement("div");
+  lb.className = "lightbox"; lb.innerHTML = `<figure><img alt=""><figcaption></figcaption></figure>`;
+  document.body.append(lb);
+  const closeLb = () => lb.classList.remove("is-open");
+  menuEl.addEventListener("click", e => {
+    const b = e.target.closest("[data-zoom]"); if (!b) return;
+    const dish = b.closest(".dish");
+    lb.querySelector("img").src = b.dataset.zoom;
+    lb.querySelector("img").alt = dish.querySelector("h3").innerText;
+    lb.querySelector("figcaption").innerHTML = dish.querySelector("h3").outerHTML.replace(/<sup>.*?<\/sup>/, "") + dish.querySelector(".price").outerHTML;
+    lb.classList.add("is-open");
+  });
+  lb.addEventListener("click", closeLb);
+  addEventListener("keydown", e => { if (e.key === "Escape") closeLb(); });
+
+  // #bar, #nigiri … — открыть нужную часть меню
+  const h = location.hash.slice(1);
+  const byCat = MENU.find(g => g.cats.some(c => c.id === h));
+  show(byCat ? byCat.id : h, byCat ? h : null);
+});
+</script>
+</body>
+</html>

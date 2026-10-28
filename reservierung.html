@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reservierung | lamondi Bayreuth</title>
+<meta name="title-de" content="Reservierung | lamondi Bayreuth">
+<meta name="title-en" content="Reservations | lamondi Bayreuth">
+<meta name="description" content="Tisch reservieren im lamondi Bayreuth, gegenüber dem Hauptbahnhof. Auch für Feiern und Catering.">
+<!-- Превью ссылки. TODO: когда будет домен, сделать адреса абсолютными (https://домен/assets/og-image.jpg) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="lamondi Bayreuth">
+<meta property="og:locale" content="de_DE">
+<meta property="og:title" content="Reservierung | lamondi Bayreuth">
+<meta property="og:description" content="Tisch reservieren im lamondi Bayreuth, gegenüber dem Hauptbahnhof. Auch für Feiern und Catering.">
+<meta property="og:image" content="assets/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#F8F1E7">
+<link rel="icon" href="assets/favicon.svg">
+<link rel="preload" href="assets/fonts/outfit-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/style.css?v=14">
+<script src="js/site.js?v=17" defer></script>
+</head>
+<body>
+<header id="site-header"></header>
+
+<main>
+  <section class="hero hero--page">
+    <div class="container" style="position:relative">
+      <h1><span class="hero__word" data-fit=".82"><span data-l="de">reservierung</span><span data-l="en">reservations</span></span></h1>
+      <div class="page-intro">
+        <p class="text-xl"><span data-l="de">Reservieren Sie Ihren Tisch — spontane Gäste sind ebenfalls herzlich willkommen.</span><span data-l="en">Book your table — walk-ins are always welcome too.</span></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="container">
+    <div class="res-grid">
+      <form class="res-form" data-reservation>
+        <h2 class="h6" style="margin-bottom:24px"><span data-l="de">ihre anfrage</span><span data-l="en">your request</span></h2>
+        <div class="fields">
+          <div class="field"><label for="r-date"><span data-l="de">datum</span><span data-l="en">date</span></label><input id="r-date" name="date" type="date" required></div>
+          <div class="field"><label for="r-time"><span data-l="de">uhrzeit</span><span data-l="en">time</span></label>
+            <select id="r-time" name="time" required>
+              <option>11:30</option><option>12:00</option><option>12:30</option><option>13:00</option><option>13:30</option>
+              <option>17:00</option><option>17:30</option><option>18:00</option><option selected>18:30</option><option>19:00</option><option>19:30</option><option>20:00</option><option>20:30</option><option>21:00</option>
+            </select></div>
+          <div class="field" id="gruppe"><label for="r-guests"><span data-l="de">personen</span><span data-l="en">guests</span></label>
+            <select id="r-guests" name="guests">
+              <option>1</option><option selected>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option>
+              <option value="9+" data-de="9 oder mehr (Gruppe)" data-en="9 or more (group)">9 oder mehr (Gruppe)</option>
+            </select></div>
+          <div class="field"><label for="r-name">name</label><input id="r-name" name="name" type="text" autocomplete="name" required></div>
+          <div class="field"><label for="r-phone"><span data-l="de">telefon</span><span data-l="en">phone</span></label><input id="r-phone" name="phone" type="tel" autocomplete="tel" required></div>
+          <div class="field"><label for="r-email"><span data-l="de">e-mail (optional)</span><span data-l="en">e-mail (optional)</span></label><input id="r-email" name="email" type="email" autocomplete="email"></div>
+          <div class="field full"><label for="r-note"><span data-l="de">anmerkungen</span><span data-l="en">notes</span></label>
+            <textarea id="r-note" name="note" data-ph-de="Anlass, Allergien, Kinderstuhl …" data-ph-en="Occasion, allergies, high chair …" placeholder="Anlass, Allergien, Kinderstuhl …"></textarea></div>
+        </div>
+        <button class="btn btn--solid" type="submit" style="margin-top:26px"><span data-l="de">anfrage senden</span><span data-l="en">send request</span></button>
+        <p class="form-msg" aria-live="polite"></p>
+      </form>
+
+      <aside class="res-side">
+        <div class="side-block">
+          <h2 class="h6"><span data-l="de">lieber anrufen?</span><span data-l="en">rather call?</span></h2>
+          <p class="text-xl" style="margin-top:10px"><a data-phone></a></p>
+          <p><span data-l="de">Für Gruppen ab 9 Personen, Feiern, Firmenessen und Catering besprechen wir alles gerne telefonisch.</span><span data-l="en">For groups of 9 or more, parties, business dinners and catering, we're happy to sort everything by phone.</span></p>
+        </div>
+        <div class="side-block">
+          <h2 class="h6"><span data-l="de">öffnungszeiten</span><span data-l="en">opening hours</span></h2>
+          <div data-hours style="margin-top:12px"></div>
+        </div>
+        <div class="side-block">
+          <h2 class="h6"><span data-l="de">adresse</span><span data-l="en">address</span></h2>
+          <p style="margin-top:12px">Bahnhofstraße 23<br>95444 Bayreuth<br><a data-maps target="_blank" rel="noopener"><span data-l="de">route planen</span><span data-l="en">get directions</span></a></p>
+        </div>
+      </aside>
+    </div>
+  </section>
+</main>
+
+<footer id="site-footer"></footer>
+</body>
+</html>
