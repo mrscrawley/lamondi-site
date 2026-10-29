@@ -32,6 +32,12 @@
   --header-h: 115px;
   color-scheme: dark;     /* тёмные поля формы и полосы прокрутки */
 }
+/* светлая тема — прежняя палитра (переключатель в шапке, выбор хранится в браузере) */
+:root[data-theme="light"] {
+  --bg: #F8F1E7; --ink: #2E241D; --accent: #B4501E; --line: #E6B98C; --muted: #7E7066;
+  --panel: #F3E2CC; --dark: #1E1611; --on-brand: #F8F1E7;
+  color-scheme: light;
+}
 
 *, *::before, *::after { box-sizing: border-box; }
 /* Lenis — инерционная прокрутка */
@@ -107,6 +113,12 @@ html[lang="en"] [data-l="de"] { display: none !important; }
 .nav-main a:focus-visible { outline: 1px solid var(--brand); outline-offset: 6px; }
 .header-right { display: flex; align-items: center; gap: 14px; }
 .lang-switch { display: flex; border: 1px solid var(--line); }
+.theme-toggle { width: 34px; height: 30px; display: grid; place-items: center; border: 1px solid var(--line); background: none; color: var(--ink); padding: 0; cursor: pointer; }
+.theme-toggle:hover { color: var(--brand); }
+.theme-toggle svg { width: 16px; height: 16px; }
+.theme-toggle .i-sun { display: none; }
+:root[data-theme="light"] .theme-toggle .i-sun { display: block; }
+:root[data-theme="light"] .theme-toggle .i-moon { display: none; }
 .lang-switch button {
   border: 0; background: none; padding: 6px 9px; font-size: 12px; font-weight: 500; letter-spacing: .06em; color: var(--muted);
 }
@@ -196,7 +208,7 @@ html[lang="en"] [data-l="de"] { display: none !important; }
 
 /* ---------- блок «о ресторане» ---------- */
 .details { margin-top: 24px; }
-.details__media { aspect-ratio: 16 / 8; overflow: hidden; background: var(--dark); }
+.details__media { aspect-ratio: 16 / 8; overflow: hidden; background: var(--bg); }
 .details__media { position: relative; }
 .details__media img, .details__media video { width: 100%; height: 100%; object-fit: cover; }
 .details__media video { position: absolute; inset: 0; }

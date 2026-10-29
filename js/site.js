@@ -52,6 +52,18 @@ document.documentElement.lang = getLang();
 
 const langSwitch = () => `<div class="lang-switch" role="group" aria-label="Sprache / Language">
   <button type="button" data-lang="de" aria-pressed="false">DE</button><button type="button" data-lang="en" aria-pressed="false">EN</button></div>`;
+// тёмная (по умолчанию) / светлая тема; data-theme ставит ещё скрипт в <head>, чтобы не мигало
+const themeToggle = () => `<button class="theme-toggle" type="button" data-theme-toggle aria-label="Hell / Dunkel">
+  <svg class="i-moon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="M13.5 9.6A5.6 5.6 0 0 1 6.4 2.5a5.6 5.6 0 1 0 7.1 7.1Z"/></svg>
+  <svg class="i-sun" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><circle cx="8" cy="8" r="3"/><path d="M8 1v1.6M8 13.4V15M1 8h1.6M13.4 8H15M3 3l1.1 1.1M11.9 11.9 13 13M3 13l1.1-1.1M11.9 4.1 13 3"/></svg></button>`;
+function setTheme(t) {
+  if (t === "light") document.documentElement.dataset.theme = "light"; else delete document.documentElement.dataset.theme;
+  try { localStorage.setItem("theme", t); } catch {}
+  document.querySelector('meta[name="theme-color"]')?.setAttribute("content", t === "light" ? "#F8F1E7" : "#000000");
+}
+document.addEventListener("click", e => {
+  if (e.target.closest("[data-theme-toggle]")) setTheme(document.documentElement.dataset.theme === "light" ? "dark" : "light");
+});
 
 /* ---------- шапка / подвал ---------- */
 function renderHeader() {
@@ -68,6 +80,7 @@ function renderHeader() {
       <a class="logo-word" href="index.html" aria-label="lamondi — Startseite"><span class="lm" aria-label="lamondi">lamond<span class="idot">ı</span></span></a>
       <nav class="nav-main" aria-label="Hauptnavigation"><ul>${links}</ul></nav>
       <div class="header-right">
+        ${themeToggle()}
         ${langSwitch()}
         <a class="header-res link" href="reservierung.html">${T("reservieren", "reserve")}</a>
         <button class="burger" type="button" aria-label="Menü öffnen" aria-controls="side-nav" aria-expanded="false"><span></span></button>
@@ -82,7 +95,7 @@ function renderHeader() {
         <button class="side-nav__close" type="button" aria-label="Schließen" data-close>×</button></div>
       <ul>${NAV.map(n => `<li><a href="${n.href}">${T(n.de, n.en)}</a></li>`).join("")}</ul>
       <div class="side-nav__foot">
-        ${langSwitch()}
+        <div style="display:flex;gap:10px">${themeToggle()}${langSwitch()}</div>
         <p>${CONFIG.street}<br>${CONFIG.city}<br><a href="tel:${CONFIG.tel}">${CONFIG.phone}</a></p>
       </div>
     </aside>`;

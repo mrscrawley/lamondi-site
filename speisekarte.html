@@ -19,14 +19,16 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#000000">
+<script>try{if(localStorage.getItem("theme")==="light"){document.documentElement.dataset.theme="light";var m=document.querySelector('meta[name="theme-color"]');if(m)m.content="#F8F1E7"}}catch(e){}</script>
+
 <link rel="icon" href="assets/favicon.svg">
 <link rel="preload" href="assets/fonts/outfit-latin.woff2" as="font" type="font/woff2" crossorigin>
 <!-- страницы сайта готовятся заранее, при наведении на ссылку (Chrome) — переход почти мгновенный -->
 <script type="speculationrules">{"prerender":[{"where":{"selector_matches":"a[href$='.html'], a[href*='.html?']"},"eagerness":"moderate"}],"prefetch":[{"where":{"selector_matches":"a[href$='.html'], a[href*='.html#'], a[href*='.html?']"},"eagerness":"eager"}]}</script>
-<link rel="stylesheet" href="css/style.css?v=36">
+<link rel="stylesheet" href="css/style.css?v=37">
 <script src="js/menu-data.js?v=9" defer></script>
 <script src="assets/js/lenis.min.js" defer></script>
-<script src="js/site.js?v=39" defer></script>
+<script src="js/site.js?v=40" defer></script>
 </head>
 <body>
 <header id="site-header"></header>
@@ -74,7 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const dish = (d, c) => {
     const vol = d.v ? `<span class="vol">${T(d.v, d.v.replace(",", "."))}</span>` : "";
     const desc = d.dDe ? T(d.dDe, d.dEn) : "";
-    const thumb = d.img ? `<button class="dish__thumb" type="button" data-zoom="assets/img/sushi/${d.img}.webp?v=d2" aria-label="Foto"><img src="assets/img/sushi/${d.img}-s.webp?v=d2" alt="" loading="lazy"></button>` : "";
+    const thumb = d.img ? `<button class="dish__thumb" type="button" data-zoom="assets/img/sushi/${d.img}.webp?v=a1" aria-label="Foto"><img src="assets/img/sushi/${d.img}-s.webp?v=a1" alt="" loading="lazy"></button>` : "";
     return `<div class="dish${d.img ? " dish--img" : ""}${d.hl ? " dish--hl" : ""}">
       ${thumb}
       <h3>${T(d.de, d.en)}${d.z ? `<sup>${d.z}</sup>` : ""}</h3>
