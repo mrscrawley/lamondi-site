@@ -12,22 +12,25 @@
    стены-шахматки, белые скатерти, тёмный пол.
    ========================================================== */
 :root {
-  --bg: #F8F1E7;          /* тёплый белый (стены, скатерти) */
-  --ink: #2E241D;         /* текст — тёмное дерево */
+  /* тёмная тема (29.10.2026): почти чёрный тёплый фон, светлый текст, оранжевый бренд */
+  --bg: #000000;          /* фон — чисто чёрный */
+  --ink: #F2E9DE;         /* текст — тёплый белый */
   --brand: #E2661F;       /* главный оранжевый: вордмарк, кнопки */
-  --accent: #B4501E;      /* жжёный оранжевый: ссылки, мелкий текст */
+  --accent: #F28C4E;      /* светлее оранжевый: ссылки, ховеры (читается на чёрном) */
   --amber: #F5B04F;       /* светящаяся ниша */
   --glow: #FFE2B0;        /* центр свечения */
-  --line: #E6B98C;        /* тонкие рамки 1px */
-  --muted: #7E7066;
-  --panel: #F3E2CC;       /* кнопка-бургер, ховеры */
-  --dark: #1E1611;        /* зал вечером */
+  --line: #4A3628;        /* тонкие рамки 1px */
+  --muted: #A49689;
+  --panel: #1A1410;       /* кнопка-бургер, ховеры */
+  --dark: #000000;
+  --on-brand: #FFF7EE;    /* текст на оранжевом */
 
   --font: "Outfit", "Helvetica Neue", Arial, sans-serif;
   --container: 1400px;
   --gutter: 20px;
   --section-gap: 150px;
   --header-h: 115px;
+  color-scheme: dark;     /* тёмные поля формы и полосы прокрутки */
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -75,9 +78,9 @@ html[lang="en"] [data-l="de"] { display: none !important; }
   color: var(--ink); font-weight: 500; font-size: 14.3px; text-transform: lowercase;
   transition: background .25s, color .25s, border-color .25s;
 }
-.btn:hover { background: var(--brand); border-color: var(--brand); color: var(--bg); }
-.btn--solid { background: var(--brand); border-color: var(--brand); color: var(--bg); }
-.btn--solid:hover { background: var(--ink); border-color: var(--ink); }
+.btn:hover { background: var(--brand); border-color: var(--brand); color: var(--on-brand); }
+.btn--solid { background: var(--brand); border-color: var(--brand); color: var(--on-brand); }
+.btn--solid:hover { background: var(--ink); border-color: var(--ink); color: var(--bg); }
 .btn--block { width: 100%; }
 
 /* ---------- шапка ---------- */
@@ -135,7 +138,7 @@ html[lang="en"] [data-l="de"] { display: none !important; }
 .side-nav {
   position: fixed; inset: 0; z-index: 100; pointer-events: none; overflow: hidden;
 }
-.side-nav__scrim { position: absolute; inset: 0; background: rgba(59,57,54,.35); opacity: 0; transition: opacity .35s; }
+.side-nav__scrim { position: absolute; inset: 0; background: rgba(0,0,0,.55); opacity: 0; transition: opacity .35s; }
 .side-nav__panel {
   position: absolute; top: 0; right: 0; bottom: 0; width: min(440px, 100%);
   background: var(--bg); border-left: 1px solid var(--line);
@@ -218,7 +221,7 @@ html[lang="en"] [data-l="de"] { display: none !important; }
 .pattern-band .niche { cursor: default; }
 
 /* секция «die leuchtwand» */
-.lw { position: relative; background: #FBF8F3; border: 1px solid var(--line); padding: 48px 24px; display: grid; gap: 40px; align-items: center; overflow: hidden; }
+.lw { --ink: #2E241D; --muted: #7E7066; --line: #E6B98C; --accent: #B4501E; --panel: #F3E2CC; color: var(--ink); position: relative; background: #FBF8F3; border: 1px solid var(--line); padding: 48px 24px; display: grid; gap: 40px; align-items: center; overflow: hidden; }
 .lw::after { /* оранжевая светящаяся колонна, как справа от стены в зале */
   content: ""; position: absolute; top: 0; bottom: 0; right: 0; width: 18px;
   background: linear-gradient(90deg, var(--amber), var(--brand) 60%, #F08A2E);
@@ -362,7 +365,7 @@ html[lang="en"] [data-l="de"] { display: none !important; }
   flex: 0 0 auto; padding: 16px 22px; color: var(--ink); font-weight: 500; text-transform: lowercase; white-space: nowrap;
 }
 .menu-tabs a + a { border-left: 1px solid var(--line); }
-.menu-tabs a.is-active { background: var(--brand); color: var(--bg); }
+.menu-tabs a.is-active { background: var(--brand); color: var(--on-brand); }
 @media (min-width: 960px) { .menu-tabs { top: var(--header-h); } }
 .menu-cat { padding-top: 80px; }
 .menu-cat__head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; border-bottom: 1px solid var(--line); padding-bottom: 14px; margin-bottom: 8px; }
@@ -370,7 +373,7 @@ html[lang="en"] [data-l="de"] { display: none !important; }
 @media (max-width: 599px) { .menu-cat__head { flex-direction: column; align-items: flex-start; gap: 6px; } .menu-cat__head p { text-align: left; } }
 .menu-list { display: grid; grid-template-columns: 1fr; column-gap: 64px; }
 @media (min-width: 900px) { .menu-list { grid-template-columns: 1fr 1fr; } }
-.dish { display: grid; grid-template-columns: 1fr auto; gap: 4px 20px; padding: 18px 0; border-bottom: 1px dashed rgba(195,147,103,.5); }
+.dish { display: grid; grid-template-columns: 1fr auto; gap: 4px 20px; padding: 18px 0; border-bottom: 1px dashed rgba(195,147,103,.3); }
 .dish h3 { font-size: 18px; font-weight: 400; text-transform: lowercase; }
 .dish .price { font-weight: 500; white-space: nowrap; }
 .dish .price small { font-weight: 400; font-size: 12px; color: var(--muted); }
@@ -387,7 +390,7 @@ html[lang="en"] [data-l="de"] { display: none !important; }
 .menu-groups b { font-weight: 400; font-size: clamp(17px, 4.2vw, 40px); line-height: 1; letter-spacing: -.02em; }
 .menu-groups small { color: var(--muted); font-size: 13px; }
 .menu-groups button:hover { background: var(--panel); }
-.menu-groups button.is-active { background: var(--brand); color: var(--bg); }
+.menu-groups button.is-active { background: var(--brand); color: var(--on-brand); }
 .menu-groups button.is-active small { color: var(--glow); }
 .menu-groups button:focus { outline: none; }
 .menu-groups button:focus-visible { outline: 2px solid var(--ink); outline-offset: -4px; }

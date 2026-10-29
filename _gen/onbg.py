@@ -5,7 +5,8 @@ from PIL import Image, ImageFilter
 from scipy import ndimage
 src, out = sys.argv[1], sys.argv[2]
 fade = float(sys.argv[3]) if len(sys.argv) > 3 else 0.14   # доля высоты снизу под растворение
-BG = np.array([0xF8, 0xF1, 0xE7], float)
+import os
+BG = np.array([int(os.environ.get("BG", "F8F1E7")[i:i + 2], 16) for i in (0, 2, 4)], float)  # тёмная тема: BG=14100D
 im = np.asarray(Image.open(src).convert("RGB")).astype(float)
 d = np.abs(im - im[8:40, 8:40].reshape(-1, 3).mean(0)).max(-1)
 near = d < 22
@@ -13,6 +14,8 @@ lab, _ = ndimage.label(near)
 edge = set(np.unique(np.r_[lab[0], lab[:, 0], lab[:, -1]])) - {0}
 m = np.isin(lab, list(edge))
 m = ndimage.binary_opening(m, iterations=1)
+g = int(os.environ.get("GROW", 0))                 # на тёмном фоне: съесть светлую кайму по контуру
+if g: m = ndimage.binary_dilation(m, iterations=g)
 a = np.asarray(Image.fromarray((m * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(1.2))).astype(float) / 255
 h = im.shape[0]; y = np.arange(h)[:, None] / h
 g = np.clip((y - (1 - fade)) / fade, 0, 1) ** 1.6          # плавный переход к фону внизу

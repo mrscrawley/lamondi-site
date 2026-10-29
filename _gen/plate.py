@@ -7,13 +7,15 @@ import numpy as np
 from PIL import Image
 from scipy import ndimage
 BG = np.array([248, 241, 231], float)
+import os
+OUT = np.array([int(os.environ.get("BG", "F8F1E7")[i:i + 2], 16) for i in (0, 2, 4)], float)  # цвет фона на выходе (тёмная тема: BG=14100D)
 src, dst = sys.argv[1], sys.argv[2]; dark = "--dark-bg" in sys.argv; rim = "--rim" in sys.argv
 im = Image.open(src).convert("RGB"); a = np.asarray(im).astype(float); h, w = a.shape[:2]
 if dark:
     edge = np.concatenate([a[0], a[-1], a[:, 0], a[:, -1]]); ref = np.median(edge, 0)
     m = np.abs(a - ref).max(2) > 45
 else:
-    m = np.abs(a - BG).max(2) > 7
+    m = np.abs(a - BG).max(2) > float(os.environ.get("THR", 7))   # бледный край тарелки — THR=3
 m = ndimage.binary_opening(m, iterations=2)
 lab, n = ndimage.label(m); big = 1 + np.argmax(ndimage.sum(m, lab, range(1, n + 1)))
 m = ndimage.binary_fill_holes(lab == big)
@@ -31,6 +33,6 @@ out = a.copy()
 if rim:                                                # мягкий ободок: чуть темнее у самого края тарелки
     t = np.clip((r - (R - R * 0.035)) / (R * 0.035), 0, 1)[..., None]
     out = out * (1 - 0.07 * t ** 1.6)
-out = out * alpha + BG * (1 - alpha)
+out = out * alpha + OUT * (1 - alpha)
 Image.fromarray(np.clip(out, 0, 255).astype(np.uint8)).save(dst, quality=92)
 print(dst, "circle", round(cx), round(cy), round(R), "of", w, h)
